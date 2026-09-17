@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Exo } from "next/font/google";
 import "./globals.css";
-import BGTopo from "@/app/components/ui/BGTopo";
+import BGDepth from "@/app/components/ui/BGDepth";
 import { ScrollProvider } from "@/app/utils/ScrollContext";
 import AnimatedWrapper from "@/app/utils/AnimatedWrapper";
 import AnalyticsWrapper from "./utils/AnalyticsWrapper";
@@ -58,7 +58,7 @@ export default function RootLayout({
 					<AnimatedWrapper>
 						<ScrollProvider>{children}</ScrollProvider>
 					</AnimatedWrapper>
-					<BGTopo />
+					<BGDepth />
 					{/* </CRTFilter> */}
 				</AnalyticsWrapper>
 			</body>
