@@ -22,10 +22,10 @@ type Rgb = [number, number, number];
  * The gradient gently lerps between them, so the screen always sits in a
  * combination of deep jewel tones and never washes out to white.
  */
-const DEEP_INDIGO: Rgb = [0.22, 0.26, 0.92];
-const DEEP_VIOLET: Rgb = [0.62, 0.18, 0.94];
-const DEEP_EMERALD: Rgb = [0.08, 0.62, 0.5];
-const DEEP_CRIMSON: Rgb = [0.86, 0.16, 0.38];
+const DEEP_INDIGO: Rgb = [0.16, 0.19, 0.72];
+const DEEP_VIOLET: Rgb = [0.38, 0.12, 0.62];
+const DEEP_EMERALD: Rgb = [0.06, 0.42, 0.36];
+const DEEP_CRIMSON: Rgb = [0.6, 0.11, 0.27];
 
 /** Deep pairings the gradient travels through. */
 const PAIRS: { a: Rgb; b: Rgb }[] = [
@@ -41,7 +41,7 @@ const SCALE = 8;
 const FRAME_MS = 1000 / 30;
 
 /** Overall depth: 1 = the palette above, lower = darker. */
-const LEVEL = 0.8;
+const LEVEL = 0.55;
 /** The palette is normalised, the canvas buffer is 8-bit. */
 const TO_BYTE = 255;
 
@@ -190,48 +190,74 @@ export default function BGDepth() {
 				className="h-full w-full scale-[1.12] blur-[26px] md:blur-[56px]"
 			/>
 
-			{/* 2. structure: soft glows for depth and concentric rings for geometry */}
+			{/* 2. depth: soft glows washing the corners (kept dim now) */}
 			<div aria-hidden="true" className="absolute inset-0">
-				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(150,120,255,0.30),transparent_66%)] blur-[60px]" />
-				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(60,80,220,0.26),transparent_66%)] blur-[70px]" />
-				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(30,150,130,0.22),transparent_68%)] blur-[70px]" />
-
-				{/* concentric rings — large, hairline, deliberately off-centre */}
-				<div className="absolute left-1/2 top-1/2 h-[158vmin] w-[158vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.10]" />
-				<div className="absolute left-1/2 top-1/2 h-[112vmin] w-[112vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.075]" />
-				<div className="absolute left-1/2 top-1/2 h-[74vmin] w-[74vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.055]" />
-				<div className="absolute left-[68%] top-[22%] h-[34vmin] w-[34vmin] rounded-full border border-[#7c9dff]/[0.14]" />
-
-				{/* a few crisp accents so the geometry doesn't read as mush */}
-				<span className="absolute left-[18%] top-[30%] h-1.5 w-1.5 rounded-full bg-[#4fe3ff]/40" />
-				<span className="absolute left-[76%] top-[64%] h-1 w-1 rounded-full bg-[#ffab4a]/40" />
-				<span className="absolute left-[42%] top-[78%] h-[3px] w-[3px] rounded-full bg-white/30" />
+				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(88,70,168,0.15),transparent_66%)] blur-[60px]" />
+				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(40,52,144,0.14),transparent_66%)] blur-[70px]" />
+				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(18,98,86,0.12),transparent_68%)] blur-[70px]" />
 			</div>
 
-			{/* 3. deep vignette: pulls the focus to the centre and protects contrast */}
+			{/* 3. the system: three fixed concentric circles — two fully on screen, the
+			       third running off the edges. A loose circle orbits them, and each
+			       ring carries a planet. Only the bodies ever move. */}
+			<div aria-hidden="true" className="absolute inset-0">
+				<div className="orbit orbit--1">
+					<span className="orbit__ring" />
+				</div>
+				<div className="orbit orbit--2">
+					<span className="orbit__ring" />
+				</div>
+				<div className="orbit orbit--3">
+					<span className="orbit__ring" />
+				</div>
+
+				{/* planets circling the rings — a different radius and speed each */}
+				<span className="orbit orbit--p1">
+					<span className="orbit__planet orbit__planet--a" />
+				</span>
+				<span className="orbit orbit--p2">
+					<span className="orbit__planet orbit__planet--b" />
+				</span>
+				<span className="orbit orbit--p3">
+					<span className="orbit__planet orbit__planet--c" />
+				</span>
+
+				{/* the loose circle that orbits the three big ones, with one moon on it */}
+				<span className="orbit orbit--loose">
+					<span className="orbit__ring" />
+					<span className="orbit__trail" />
+				</span>
+
+				{/* one wider body sweeping right around all three circles */}
+				<span className="orbit orbit--outer">
+					<span className="orbit__planet orbit__planet--outer" />
+				</span>
+			</div>
+
+			{/* 4. deep vignette: pulls the focus to the centre and protects contrast */}
 			<div
 				aria-hidden="true"
 				className="absolute inset-0"
 				style={{
 					background:
-						"radial-gradient(120% 95% at 50% 42%, transparent 38%, rgba(4,5,10,0.42) 74%, rgba(3,4,8,0.82) 100%)"
+						"radial-gradient(120% 95% at 50% 42%, transparent 48%, rgba(4,5,10,0.3) 78%, rgba(3,4,8,0.7) 100%)"
 				}}
 			/>
 
-			{/* 4. grain: sits above the blur, so the texture stays crisp */}
+			{/* 5. grain: sits above the blur, so the texture stays crisp */}
 			<div
 				aria-hidden="true"
-				className="absolute inset-0 opacity-[0.34] mix-blend-overlay"
+				className="absolute inset-0 opacity-[0.42] mix-blend-overlay"
 				style={{
 					backgroundImage:
 						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E\")"
 				}}
 			/>
 
-			{/* 5. a touch of colour speckle so the dark areas still feel alive */}
+			{/* 6. a touch of colour speckle so the dark areas still feel alive */}
 			<div
 				aria-hidden="true"
-				className="absolute inset-0 opacity-[0.16] mix-blend-soft-light"
+				className="absolute inset-0 opacity-[0.2] mix-blend-soft-light"
 				style={{
 					backgroundImage:
 						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23c)'/%3E%3C/svg%3E\")"
