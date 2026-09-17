@@ -183,23 +183,58 @@ export default function BGDepth() {
 
 	return (
 		<div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#05060b]">
-			{/* colour field */}
+			{/* 1. colour field: the drifting deep tones */}
 			<canvas
 				ref={canvasRef}
 				aria-hidden="true"
 				className="h-full w-full scale-[1.12] blur-[26px] md:blur-[56px]"
 			/>
 
-			{/* keeps the UI legible on top of the brightest areas */}
-			<div className="absolute inset-0 bg-[#05060b]/28" />
+			{/* 2. structure: soft glows for depth and concentric rings for geometry */}
+			<div aria-hidden="true" className="absolute inset-0">
+				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(150,120,255,0.30),transparent_66%)] blur-[60px]" />
+				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(60,80,220,0.26),transparent_66%)] blur-[70px]" />
+				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(30,150,130,0.22),transparent_68%)] blur-[70px]" />
 
-			{/* film grain, breaks up gradient banding */}
+				{/* concentric rings — large, hairline, deliberately off-centre */}
+				<div className="absolute left-1/2 top-1/2 h-[158vmin] w-[158vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.10]" />
+				<div className="absolute left-1/2 top-1/2 h-[112vmin] w-[112vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.075]" />
+				<div className="absolute left-1/2 top-1/2 h-[74vmin] w-[74vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.055]" />
+				<div className="absolute left-[68%] top-[22%] h-[34vmin] w-[34vmin] rounded-full border border-[#7c9dff]/[0.14]" />
+
+				{/* a few crisp accents so the geometry doesn't read as mush */}
+				<span className="absolute left-[18%] top-[30%] h-1.5 w-1.5 rounded-full bg-[#4fe3ff]/40" />
+				<span className="absolute left-[76%] top-[64%] h-1 w-1 rounded-full bg-[#ffab4a]/40" />
+				<span className="absolute left-[42%] top-[78%] h-[3px] w-[3px] rounded-full bg-white/30" />
+			</div>
+
+			{/* 3. deep vignette: pulls the focus to the centre and protects contrast */}
 			<div
 				aria-hidden="true"
-				className="absolute inset-0 opacity-[0.16] mix-blend-overlay"
+				className="absolute inset-0"
+				style={{
+					background:
+						"radial-gradient(120% 95% at 50% 42%, transparent 38%, rgba(4,5,10,0.42) 74%, rgba(3,4,8,0.82) 100%)"
+				}}
+			/>
+
+			{/* 4. grain: sits above the blur, so the texture stays crisp */}
+			<div
+				aria-hidden="true"
+				className="absolute inset-0 opacity-[0.34] mix-blend-overlay"
 				style={{
 					backgroundImage:
-						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E\")"
+						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E\")"
+				}}
+			/>
+
+			{/* 5. a touch of colour speckle so the dark areas still feel alive */}
+			<div
+				aria-hidden="true"
+				className="absolute inset-0 opacity-[0.16] mix-blend-soft-light"
+				style={{
+					backgroundImage:
+						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23c)'/%3E%3C/svg%3E\")"
 				}}
 			/>
 		</div>
