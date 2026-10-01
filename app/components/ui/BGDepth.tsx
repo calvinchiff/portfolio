@@ -5,34 +5,35 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Animated deep-colour background.
+ * Animated deep-gray background.
  *
- * Replaces the old WebGL topographic waves with a cheap 2D canvas colour field.
- * Two gradient stops drift through a list of deep pairings — indigo/violet,
- * violet/blood, blood/emerald, emerald/indigo — so any given screenful holds a
- * couple of rich, dark tones: never black, never bright. A slow sine warp keeps
- * the bands organic. The canvas renders at 1/8 resolution and is scaled up with
- * a heavy CSS blur, which keeps it smooth and battery friendly.
+ * A cheap 2D canvas colour field. Two gradient stops drift through a list of
+ * dark gray nuances — charcoal, cool, neutral, warm — so any given screenful
+ * holds a couple of near-neutral tones: never black, never bright and never a
+ * coloured cast. A slow sine warp keeps the bands organic. The canvas renders
+ * at 1/8 resolution and is scaled up with a heavy CSS blur, which keeps it
+ * smooth and battery friendly.
  */
 
 type Rgb = [number, number, number];
 
 /**
- * The four deep tints, given as the fraction of each channel at full strength.
- * The gradient gently lerps between them, so the screen always sits in a
- * combination of deep jewel tones and never washes out to white.
+ * The four dark gray nuances, given as the fraction of each channel at full
+ * strength. They differ by a whisper of temperature — a touch cool, neutral, a
+ * touch warm — so the field still breathes without ever reading as coloured.
+ * The gradient gently lerps between them and never washes out to white.
  */
-const DEEP_INDIGO: Rgb = [0.16, 0.19, 0.72];
-const DEEP_VIOLET: Rgb = [0.38, 0.12, 0.62];
-const DEEP_EMERALD: Rgb = [0.06, 0.42, 0.36];
-const DEEP_CRIMSON: Rgb = [0.6, 0.11, 0.27];
+const GRAY_DEEP: Rgb = [0.14, 0.14, 0.15];
+const GRAY_COOL: Rgb = [0.2, 0.21, 0.23];
+const GRAY_MID: Rgb = [0.24, 0.24, 0.25];
+const GRAY_WARM: Rgb = [0.27, 0.26, 0.25];
 
-/** Deep pairings the gradient travels through. */
+/** Dark gray pairings the gradient travels through. */
 const PAIRS: { a: Rgb; b: Rgb }[] = [
-	{ a: DEEP_INDIGO, b: DEEP_VIOLET },
-	{ a: DEEP_VIOLET, b: DEEP_CRIMSON },
-	{ a: DEEP_CRIMSON, b: DEEP_EMERALD },
-	{ a: DEEP_EMERALD, b: DEEP_INDIGO }
+	{ a: GRAY_DEEP, b: GRAY_COOL },
+	{ a: GRAY_COOL, b: GRAY_MID },
+	{ a: GRAY_MID, b: GRAY_WARM },
+	{ a: GRAY_WARM, b: GRAY_DEEP }
 ];
 
 /** Below this the canvas renders at 1/SCALE of the CSS size. */
@@ -80,9 +81,9 @@ export default function BGDepth() {
 			const data = image.data;
 			const t = time / 1000;
 
-			// Two gradient stops travel through a list of deep pairings over a long
-			// cycle — indigo/violet, violet/blood, blood/emerald, emerald/indigo —
-			// so each screenful holds at most two jewel tones at a time.
+			// Two gradient stops travel through a list of dark gray pairings over a
+			// long cycle — charcoal, cool, neutral, warm — so each screenful holds
+			// at most two near-neutral tones at a time.
 			const cycle = ((t * 0.017) % 1 + 1) % 1;
 			const step = cycle * PAIRS.length;
 			const from = PAIRS[Math.floor(step) % PAIRS.length];
@@ -133,9 +134,9 @@ export default function BGDepth() {
 				height * 0.42,
 				maxSide * 0.85
 			);
-			vignette.addColorStop(0, "rgba(3, 4, 9, 0)");
-			vignette.addColorStop(0.62, "rgba(3, 4, 9, 0.08)");
-			vignette.addColorStop(1, "rgba(2, 3, 6, 0.45)");
+			vignette.addColorStop(0, "rgba(6, 6, 7, 0)");
+			vignette.addColorStop(0.62, "rgba(6, 6, 7, 0.1)");
+			vignette.addColorStop(1, "rgba(4, 4, 5, 0.5)");
 			ctx.fillStyle = vignette;
 			ctx.fillRect(0, 0, width, height);
 		};
@@ -182,8 +183,8 @@ export default function BGDepth() {
 	}, []);
 
 	return (
-		<div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#05060b]">
-			{/* 1. colour field: the drifting deep tones */}
+		<div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#0b0b0c]">
+			{/* 1. colour field: the drifting dark gray tones */}
 			<canvas
 				ref={canvasRef}
 				aria-hidden="true"
@@ -192,9 +193,9 @@ export default function BGDepth() {
 
 			{/* 2. depth: soft glows washing the corners (kept dim now) */}
 			<div aria-hidden="true" className="absolute inset-0">
-				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(88,70,168,0.15),transparent_66%)] blur-[60px]" />
-				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(40,52,144,0.14),transparent_66%)] blur-[70px]" />
-				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(18,98,86,0.12),transparent_68%)] blur-[70px]" />
+				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(226,229,234,0.06),transparent_66%)] blur-[60px]" />
+				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(214,218,224,0.05),transparent_66%)] blur-[70px]" />
+				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(236,238,241,0.05),transparent_68%)] blur-[70px]" />
 			</div>
 
 			{/* 3. the system: three fixed concentric circles — two fully on screen, the
@@ -240,7 +241,7 @@ export default function BGDepth() {
 				className="absolute inset-0"
 				style={{
 					background:
-						"radial-gradient(120% 95% at 50% 42%, transparent 48%, rgba(4,5,10,0.3) 78%, rgba(3,4,8,0.7) 100%)"
+						"radial-gradient(120% 95% at 50% 42%, transparent 48%, rgba(5,5,6,0.32) 78%, rgba(4,4,5,0.72) 100%)"
 				}}
 			/>
 
@@ -254,13 +255,13 @@ export default function BGDepth() {
 				}}
 			/>
 
-			{/* 6. a touch of colour speckle so the dark areas still feel alive */}
+			{/* 6. a second, coarser grain pass so the dark areas still feel alive */}
 			<div
 				aria-hidden="true"
 				className="absolute inset-0 opacity-[0.2] mix-blend-soft-light"
 				style={{
 					backgroundImage:
-						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23c)'/%3E%3C/svg%3E\")"
+						"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23c)'/%3E%3C/svg%3E\")"
 				}}
 			/>
 		</div>
