@@ -21,14 +21,6 @@ autres outils externes).
   - Aujourd'hui la tuile CV (`app/components/sections/ContactSection.tsx`, ~l.77-96) ouvre seulement le PDF via `window.open`.
   - À faire : proposer le téléchargement du `.tex` de la langue courante (attribut `download`, ou petite tuile/icône dédiée), et vérifier que le fichier est bien servi par Next.
 
-- [ ] **TODO-02 — Tester de remettre le filtre CRT, ou sinon en développer un nouveau plus efficient**
-  - Le composant existe : `app/components/ui/CRTFilter.tsx`, mais il est **commenté** dans `app/layout.tsx` (l.8, l.56, l.62).
-  - **Raison historique trouvée dans git** : commit `5c60484` — *« feat: crt filter but unused as it uses too much gpu »*. Il avait donc été désactivé pour son coût GPU.
-  - **Réactivé le 2026-10-01** pour évaluation visuelle (voir Journal) ; à désactiver en commentant l'import + les balises dans `app/layout.tsx`.
-  - Étape 1 : le réactiver et juger le rendu (scanlines + flicker + aberration).
-  - Étape 2 : mesurer le coût réel. Points chauds : `animation: textShadow 1.6s infinite` et `flicker 0.15s infinite` appliqués à un conteneur plein écran, plus le `transform: perspective(800px) rotateX(2deg)`.
-  - Si trop lourd : refaire une version « efficiente » (overlay statique + grain, pas d'animation de `text-shadow` sur toute la page, respect de `prefers-reduced-motion`, éventuellement en `background` plutôt qu'en `filter`).
-
 - [ ] **TODO-03 — Mettre à jour le background (direction finale)**
   - Passé en nuances de gris foncé (commit `d6fc0d6`) ; anciennes valeurs sauvegardées dans `bg-colors-backup.txt`.
   - Reste : valider la direction définitive (intensité, contraste avec les tuiles) et le réglage du mouvement (TODO-04, ✅ implémenté).
@@ -125,8 +117,7 @@ autres outils externes).
 
 ## 🚧 En cours
 
-- **TODO-02 — Filtre CRT** : réactivé pour évaluation (fiche détaillée en 🔥 Prioritaire).
-  → À trancher après visualisation : le garder tel quel, ou le refaire en version efficiente.
+*(rien pour le moment — déplacer ici l'item sur lequel on travaille)*
 
 ---
 
@@ -141,16 +132,33 @@ autres outils externes).
   - `bg-colors-backup.txt` : valeurs avant/après + mesures de contraste + commandes de restauration.
 - [x] **2026-10-01 — Sources LaTeX des CV ajoutées au repo** — `ba73cd0`
   - `public/contact/en_CV_CHIFFOT.tex`, `public/contact/fr_CV_CHIFFOT.tex` (le correctif reste TODO-10).
-- [x] **2026-10-01 — Effet parallax sur le background** — *(non committé)*
-  - `BGDepth.tsx` : trois plans parallax (champ de couleur, glows, système orbital) déplacés en `translate3d` par le **scroll** et par la **souris**.
-  - Une seule boucle rAF qui lisse les cibles, et n'écrit le `transform` que lorsque la valeur a bougé (> 0,05 px) ; `prefers-reduced-motion` respecté.
-  - Réglages regroupés dans la constante `PARALLAX` (px au scroll / px à la souris) : `field` 16/5, `glows` 36/12, `orbits` 54/16 — faciles à ajuster.
-  - Le scroll est lu en **phase de capture** : la page défile dans `<main>`, pas dans la fenêtre.
-  - Chaque plan est dans un wrapper `will-change-transform` ; seuls les conteneurs bougent, jamais un wrapper `.orbit`, donc les anneaux restent centrés entre eux.
-
-- [x] **2026-10-01 — Filtre CRT réactivé (étape 1 de TODO-02)** — *(non committé)*
-  - `app/layout.tsx` : import décommenté et `<CRTFilter>` replacé autour de `AnalyticsWrapper` (il englobait à l'origine le contenu + le fond).
-  - Réactivé **tel quel** pour juger le rendu ; la décision (garder / refaire) reste ouverte dans TODO-02.
+- [x] **2026-10-02 — Effet parallax sur le background (v2 : il était imperceptible)** — *(non committé)*
+  - v1 : `translate3d` mais seulement 16/36/54 px, déplacement lu via un listener `scroll` → invisible en pratique.
+  - v2 : le scroll est **lu à chaque frame** (le scroller est `<main>`, et les events `scroll` ne bubblent pas) et les amplitudes sont exprimées en **fraction de la hauteur de viewport** : `field` 3,5 %, `glows` 9 %, `orbits` 13 % au scroll ; 1,2 % / 3 % / 4,5 % à la souris.
+  - La souris déplace les plans même sans scroller ; `prefers-reduced-motion` garde une version amortie (35 %) au lieu de tout couper.
+  - Une seule boucle rAF, écriture du `transform` uniquement si le déplacement dépasse 0,05 px.
+  - Réglages regroupés dans la constante `PARALLAX` en haut de `BGDepth.tsx`.
+  - **Vérifié dans le navigateur** : −28 / −72 / −105 px (v2).
+  - v3 (2026-10-02) : amplitude augmentée (~+45 %). Sens d'abord inversé, puis **re-remis dans le sens d'origine** (les plans remontent quand on descend) → `field` 5 %, `glows` 13 %, `orbits` 19 %, soit **−40 / −104 / −152 px** en bas de page. Le canvas reste à `scale-[1.2]` pour que le tirage n'expose jamais son bord.
+  - Réponse à la souris **réduite deux fois** (2026-10-02) : `pointer` 0,6 % / 1,5 % / 2,25 %, soit ±5,4 / ±13,5 / ±20,2 px sur 900 px de haut — mesuré au navigateur. Le scroll n'a pas été touché.
+- [x] **2026-10-02 — Courbure d'écran extraite dans son propre composant (`ScreenCurve`)** — *(non committé)*
+  - **Bug réparé au passage** : une version intermédiaire posait `background: #0b0b0c` sur le conteneur CRT ; ce fond opaque passait par-dessus le `BGDepth` (en `z-index: -10`) → background et cercles invisibles. Plus aucun fond opaque.
+  - `app/components/ui/ScreenCurve.tsx` : distorsion en barillet **indépendante du CRT** — on peut retirer l'un sans l'autre dans `app/layout.tsx`.
+  - Filtre SVG `feDisplacementMap` alimenté par `app/components/ui/crtBarrelMap.ts` (carte 128×128 générée : R = offset X, G = offset Y, 128 = neutre). Le centre reste quasi intact, les bords sont tirés vers l'extérieur → les lignes droites se bombent, comme sur un tube convexe.
+  - Deux détails le font marcher : `colorInterpolationFilters="sRGB"` (sinon le 128 neutre est remappé et toute la page se décale) et un overscan `scale(1.08)` avec région de filtre à 112 %, sinon des trous apparaissent aux bords.
+  - Réglages : `BARREL` (coupe tout), `BARREL_SCALE` = **68** (px max au coin ; monté 48 → 56 → 68 au fil des essais) et `OVERSCAN` = 1.09 (doit couvrir `BARREL_SCALE / 2` de tirage vertical).
+  - **Vérifié dans Brave headless via CDP** : filtre appliqué, background visible, aucun trou aux bords, nav fixe au scroll. Coût mesuré : **53 fps avec le filtre contre 60 sans** en scroll continu (rendu logiciel → pessimiste), à surveiller avec `TODO-30`.
+- [x] **2026-10-02 — CRT recentré sur l'effet pixel, tilt sorti dans `ScreenTilt` (TODO-02 tranché)** — *(non committé)*
+  - `CRTFilter.tsx` ne contient plus que la texture : scanlines 2 px + sous-pixels RVB 3 px (`background-size: 100% 2px, 3px 100%`), **entièrement statique** — c'est l'« effet de pixels visibles ».
+  - **Retiré** : l'animation `flicker` (l'overlay sombre qui pulsait toutes les 0,15 s et faisait disparaître/réapparaître la moitié du contenu) et l'animation `text-shadow` (le grésillement). Vérifié : `animationName: none` sur `.crt-container` et `.crt-screen`, et le pseudo-élément `::after` n'existe plus.
+  - **Retiré aussi** : le `overflow: hidden` + `border-radius: 20px` du CRT — il ne clippe plus rien, c'est devenu un simple calque de texture posé au-dessus du contenu.
+  - `app/components/ui/ScreenTilt.tsx` (nouveau) : le tilt `perspective(800px) rotateX(2deg)` isolé, avec son propre `TILT`.
+  - Les trois effets vivent maintenant dans trois fichiers séparés, imbriqués dans `app/layout.tsx` (courbure → tilt → pixels) et retirables un par un.
+  - **Vérifié dans Brave headless via CDP** : les 3 effets présents et indépendants, background visible, plus aucune animation CRT (ne restent que les `orbit-spin` du fond).
+- [x] **2026-10-02 — Tilt retiré du montage, parallax re-remis dans le sens d'origine** — *(non committé)*
+  - `ScreenTilt` n'est plus importé ni monté dans `app/layout.tsx` ; `app/components/ui/ScreenTilt.tsx` reste sur le disque (non utilisé) pour pouvoir le remettre en une ligne — à supprimer si tu confirmes que le tilt ne revient pas.
+  - Parallax : sens d'origine restauré (les plans **remontent** quand on descend), amplitude augmentée conservée → mesuré **−40 / −104 / −152 px** en bas de page, sans trou au bord.
+  - **Vérifié dans Brave headless :** tilt absent (`.screen-tilt` inexistant), courbure + pixels actifs, background visible, aucune animation CRT, footer et cercles intacts en bas de page.
 
 ---
 
@@ -197,3 +205,11 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-01 | Cartes du board Trello importées dans ce fichier (TODO-11 → TODO-33) | *(non committé)* |
 | 2026-10-01 | Filtre CRT réactivé pour évaluation (TODO-02) | *(non committé)* |
 | 2026-10-01 | Effet parallax du background (TODO-04) | *(non committé)* |
+| 2026-10-02 | Parallax v2 : amplitudes en % de viewport, scroll lu à chaque frame | *(non committé)* |
+| 2026-10-02 | CRT refait : grésillement + inclinaison retirés, arrondi « vieille TV » | *(non committé)* |
+| 2026-10-02 | CRT v3 : vraie courbure `feDisplacementMap` + fond opaque qui masquait le background réparé | *(non committé)* |
+| 2026-10-02 | Vérification navigateur (Brave headless + CDP) : rendu, parallax, FPS | *(non committé)* |
+| 2026-10-02 | Courbure extraite dans `ScreenCurve`, CRT remis en version d'origine | *(non committé)* |
+| 2026-10-02 | Parallax v3 : sens inversé, amplitude +45 % | *(non committé)* |
+| 2026-10-02 | CRT = grille de pixels statique (flicker + text-shadow retirés), tilt extrait dans `ScreenTilt` | *(non committé)* |
+| 2026-10-02 | Tilt retiré du montage, parallax re-remis dans le sens d'origine | *(non committé)* |
