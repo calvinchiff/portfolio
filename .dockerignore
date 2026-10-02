@@ -1,0 +1,26 @@
+# What the Docker build does NOT need.
+# Without this file the whole repo (including .git and any local build output)
+# is sent as the build context, which slows down every deploy — noticeable on an
+# arm64 build emulated through QEMU.
+
+# --- never in the image ------------------------------------------------------
+.git
+.gitignore
+.github
+.vercel
+
+# --- rebuilt inside the image ------------------------------------------------
+.next
+out
+node_modules
+*.tsbuildinfo
+
+# --- local notes and OS noise ------------------------------------------------
+.DS_Store
+*.md
+bg-colors-backup.txt
+project-structure.txt
+
+# Kept on purpose: package.json, package-lock.json, app/, public/,
+# next.config.js, next-sitemap.config.js, postcss.config.mjs,
+# tsconfig.json, eslint.config.mjs

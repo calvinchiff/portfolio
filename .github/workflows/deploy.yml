@@ -1,38 +1,75 @@
 name: Deploy Portfolio
 
+# Push to main  -> build the image, then deploy it on the Pi.
+# Push a v* tag -> build and push a versioned image only (no deploy), so any
+#                  released version stays redeployable without rebuilding it.
 on:
   push:
     branches: [main]
+    tags: ["v*"]
+
+# one deployment at a time; never cancel a run that is already deploying
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: false
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     permissions:
       contents: read
       packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Compute image tags
+        id: meta
+        run: |
+          # GHCR requires an all-lowercase repository path
+          IMAGE="ghcr.io/$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+          {
+            echo "tags<<TAGS"
+            echo "$IMAGE:${GITHUB_REF_NAME//\//-}"   # "main", or "v2.0.0" on a tag
+            echo "$IMAGE:sha-${GITHUB_SHA}"          # immutable, what the deploy job pulls
+            if [ "$GITHUB_REF_TYPE" = "branch" ]; then
+              echo "$IMAGE:latest"
+            fi
+            echo "TAGS"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push (arm64)
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
+    # a tag push only builds the versioned image; only main touches the Pi
     needs: build-and-push
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Connect to Tailscale
         uses: tailscale/github-action@v2
@@ -40,16 +77,72 @@ jobs:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Deploy on Raspberry Pi
+        env:
+          IMAGE: ${{ needs.build-and-push.outputs.image }}:sha-${{ github.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no -p ${{ secrets.PI_PORT }} ${{ secrets.PI_USER_HOST }} << 'EOF'
-          docker pull ghcr.io/${{ github.repository }}:latest
-          docker stop portfolio || true
-          docker rm portfolio || true
-          docker run -d --name portfolio --restart always -p 3000:3000 ghcr.io/${{ github.repository }}:latest
+          ssh -o StrictHostKeyChecking=no -p "${{ secrets.PI_PORT }}" \
+              "${{ secrets.PI_USER_HOST }}" "IMAGE='$IMAGE' bash -s" << 'EOF'
+          set -euo pipefail
+
+          echo "deploying $IMAGE"
+          docker pull "$IMAGE"
+
+          # Keep the current container as the rollback target until the new one
+          # has answered at least once.
+          docker rm -f portfolio_prev >/dev/null 2>&1 || true
+          if docker inspect portfolio >/dev/null 2>&1; then
+            docker stop portfolio >/dev/null
+            docker rename portfolio portfolio_prev
+          fi
+
+          docker run -d --name portfolio --restart always -p 3000:3000 "$IMAGE"
+
+          # Health check: the previous container is restored automatically if the
+          # new one never answers, so a bad build cannot leave the site down.
+          # The probe tries 127.0.0.1, localhost and the container's own hostname,
+          # because the standalone Next server may bind to $HOSTNAME (the
+          # container id in Docker) rather than to 0.0.0.0.
+          healthy=0
+          for _ in $(seq 1 20); do
+            sleep 3
+            if docker exec portfolio node -e 'const u=["http://127.0.0.1:3000/","http://localhost:3000/","http://"+require("os").hostname()+":3000/"];(async()=>{for(const x of u){try{const r=await fetch(x);if(r.ok)process.exit(0)}catch(e){}}process.exit(1)})()' >/dev/null 2>&1; then
+              healthy=1
+              break
+            fi
+          done
+
+          if [ "$healthy" != "1" ]; then
+            echo "::error::the new container is not answering, rolling back"
+            docker logs --tail 50 portfolio || true
+            docker rm -f portfolio || true
+            if docker inspect portfolio_prev >/dev/null 2>&1; then
+              docker rename portfolio_prev portfolio
+              docker start portfolio
+            fi
+            exit 1
+          fi
+
+          docker rm -f portfolio_prev >/dev/null 2>&1 || true
+
+          # Clean up, staying inside this repository's images:
+          # untagged build layers, then every sha-* build except the 5 most recent
+          # (the running one is never touched). Other containers' images are left
+          # alone on purpose.
           docker image prune -f
+          REPO="${{ needs.build-and-push.outputs.image }}"
+          docker images --format '{{.Repository}}:{{.Tag}}|{{.CreatedAt}}' \
+            | grep "^${REPO}:sha-" \
+            | sort -t'|' -k2 -r \
+            | tail -n +6 \
+            | cut -d'|' -f1 \
+            | xargs -r docker image rmi -f 2>/dev/null || true
+
+          echo "deployed $IMAGE"
           EOF

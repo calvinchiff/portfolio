@@ -159,6 +159,13 @@ autres outils externes).
   - `ScreenTilt` n'est plus importé ni monté dans `app/layout.tsx` ; `app/components/ui/ScreenTilt.tsx` reste sur le disque (non utilisé) pour pouvoir le remettre en une ligne — à supprimer si tu confirmes que le tilt ne revient pas.
   - Parallax : sens d'origine restauré (les plans **remontent** quand on descend), amplitude augmentée conservée → mesuré **−40 / −104 / −152 px** en bas de page, sans trou au bord.
   - **Vérifié dans Brave headless :** tilt absent (`.screen-tilt` inexistant), courbure + pixels actifs, background visible, aucune animation CRT, footer et cercles intacts en bas de page.
+- [x] **2026-10-02 — CI / déploiement Raspberry Pi durci** (branche `chore/raspi-deploy-hardening`) — *(à committer)*
+  - **Images versionnées** : sur `main` → `:main`, `:sha-<sha>`, `:latest` ; sur un tag `v*` → `:vX.Y.Z` + `:sha-<sha>` **sans déploiement**. Une version passée reste donc redéployable sans rien reconstruire.
+  - **Déploiement sans coupure** : l'ancien conteneur est renommé `portfolio_prev`, la nouvelle version est sondée pendant 60 s, et en cas d'échec l'ancienne est restaurée automatiquement (le run échoue).
+  - **`.dockerignore` ajouté** : `.git`, `.next`, `out/`, `node_modules`, notes… ne partent plus dans le contexte de build.
+  - **Nettoyage borné** : couches non étiquetées + seules les 5 dernières images `sha-*` de ce dépôt ; les images des autres conteneurs du Pi sont laissées tranquilles.
+  - **`DEPLOY.md`** documente le tout, dont le jeton GHCR et les deux options (paquet public, ou jeton renouvelé).
+  - Validé : YAML parsé, logique de tags simulée (`main` → 3 tags, tag → 2 tags sans `latest`), syntaxe bash du script de déploiement, logique de nettoyage testée sur données factices.
 
 ---
 
