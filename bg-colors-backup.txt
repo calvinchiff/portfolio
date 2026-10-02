@@ -1,0 +1,174 @@
+================================================================================
+BACKGROUND & TILE COLOR VALUES — BACKUP BEFORE GRAY REWORK
+================================================================================
+Saved:  2026-10-01
+Commit: 5793c68 ("udpate: resume")
+Purpose: snapshot of the colourful jewel-tone background + dark-gray tiles, kept so
+         the previous palette can be restored exactly if the gray version is rejected.
+
+--------------------------------------------------------------------------------
+1. app/components/ui/BGDepth.tsx — gradient palette (deep jewel tones)
+--------------------------------------------------------------------------------
+Level / scale:
+    const SCALE = 8;                  // canvas renders at 1/8 CSS size, then blurred
+    const FRAME_MS = 1000 / 30;       // 30 fps
+    const LEVEL = 0.55;               // 1 = full palette, lower = darker
+    const TO_BYTE = 255;              // palette is normalised, buffer is 8-bit
+
+Palette constants (fractions of each channel at full strength):
+    DEEP_INDIGO:  [0.16, 0.19, 0.72]      // -> rgb( 22,  27, 101) at LEVEL
+    DEEP_VIOLET:  [0.38, 0.12, 0.62]      // -> rgb( 53,  17,  87)
+    DEEP_EMERALD: [0.06, 0.42, 0.36]      // -> rgb(  8,  59,  50)
+    DEEP_CRIMSON: [0.60, 0.11, 0.27]      // -> rgb( 84,  15,  38)
+
+Gradient pairings travelled over the cycle:
+    { a: DEEP_INDIGO,  b: DEEP_VIOLET  }
+    { a: DEEP_VIOLET,  b: DEEP_CRIMSON }
+    { a: DEEP_CRIMSON, b: DEEP_EMERALD }
+    { a: DEEP_EMERALD, b: DEEP_INDIGO  }
+
+Warp / motion (unchanged by the rework):
+    const t0 = (1 - fx) * (1 - 0.55 * fy);
+    const warp = 1 + 0.22 * Math.sin(fx * 3.7 + fy * 2.9 + t * 0.15)
+                       * Math.sin(fy * 3.1 - t * 0.11);
+    const cycle = ((t * 0.017) % 1 + 1) % 1;
+
+Canvas vignette (drawn onto the 1/8 buffer):
+    stop 0.00 -> "rgba(3, 4, 9, 0)"
+    stop 0.62 -> "rgba(3, 4, 9, 0.08)"
+    stop 1.00 -> "rgba(2, 3, 6, 0.45)"
+    radial centre: (width/2, height*0.42), inner r = min(w,h)*0.22, outer r = max(w,h)*0.85
+
+Container + decorative layers:
+    wrapper background .......... bg-[#05060b]
+    glow 1 (top-left) ........... radial-gradient(circle, rgba(88, 70, 168, 0.15), transparent 66%)   blur-[60px]
+    glow 2 (right) .............. radial-gradient(circle, rgba(40, 52, 144, 0.14), transparent 66%)   blur-[70px]
+    glow 3 (bottom-left) ........ radial-gradient(circle, rgba(18, 98, 86, 0.12),  transparent 68%)   blur-[70px]
+    full-screen vignette ........ radial-gradient(120% 95% at 50% 42%, transparent 48%,
+                                                  rgba(4, 5, 10, 0.3) 78%,
+                                                  rgba(3, 4, 8, 0.7) 100%)
+    grain overlay ............... opacity-[0.42] mix-blend-overlay  (SVG fractalNoise 180x180)
+    colour speckle .............. opacity-[0.2]  mix-blend-soft-light (SVG fractalNoise 240x240, saturate 3)
+    canvas ...................... h-full w-full scale-[1.12] blur-[26px] md:blur-[56px]
+
+--------------------------------------------------------------------------------
+2. app/globals.css — orbital bodies + page base
+--------------------------------------------------------------------------------
+    .orbit__ring border ................. rgba(255, 255, 255, 0.06)
+    .orbit--1 .orbit__ring .............. rgba(255, 255, 255, 0.07)
+    .orbit--2 .orbit__ring .............. rgba(255, 255, 255, 0.055)
+    .orbit--3 .orbit__ring .............. rgba(255, 255, 255, 0.045)
+    .orbit--loose .orbit__ring .......... rgba(190, 214, 255, 0.07)
+    .orbit__trail background ............ #bfe6ff
+    .orbit__trail box-shadow ............ 0 0 12px 2px rgba(120, 200, 255, 0.4)
+    .orbit--p1 --planet-core ........... #9ff0ff   --planet-glow rgba(79, 227, 255, 0.45)
+    .orbit--p2 --planet-core ........... #c9bcff   --planet-glow rgba(120, 100, 255, 0.4)
+    .orbit--p3 --planet-core ........... #ffd39a   --planet-glow rgba(255, 171, 74, 0.4)
+    .orbit--outer --planet-core ........ #d8e8ff   --planet-glow rgba(160, 200, 255, 0.45)
+    body background ................... var(--background) -> #ffffff (light) / #0a0a0a (dark)
+    .text-glow text-shadow ............. 0px 0px 15px rgba(252, 255, 210, 0.9)   [warm accent, kept]
+
+--------------------------------------------------------------------------------
+3. app/components/ui/BGTile.tsx — the tile surface itself
+--------------------------------------------------------------------------------
+    className="absolute inset-0 z-0 rounded-[35px] opacity-90
+               border border-black/5
+               bg-[rgb(52,52,52)]
+               shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_10px_rgba(255,255,255,0.08)]"
+
+    Effective tile fill over the old #05060b base (90% opacity) ~ rgb(48, 48, 49).
+    Used by: Tile.tsx, Section.tsx (the blurred side tiles) and Header.tsx (nav pill).
+
+--------------------------------------------------------------------------------
+4. Other UI colours that must stay readable on the new background
+--------------------------------------------------------------------------------
+    Header nav ................. backdrop-blur-md , shadow-xl, text-white/30 -> text-white/90 + text-glow
+    Toggle ..................... border-white / bg-white/20 / bg-white
+    CareerSection timeline ..... bg-white, bg-white/20, bg-black/30, border-white(/50)
+                                 glows rgba(255, 255, 255, 0.4 - 0.8)
+    Section inactive tiles ..... blur-[2px] opacity-50
+================================================================================
+
+
+================================================================================
+NEW GRAY VALUES — APPLIED 2026-10-01 (darker, near-neutral background)
+================================================================================
+
+--------------------------------------------------------------------------------
+1. app/components/ui/BGDepth.tsx — gradient palette (dark gray nuances)
+--------------------------------------------------------------------------------
+    const GRAY_DEEP: Rgb = [0.14, 0.14, 0.15];   // -> rgb(20, 20, 21)  #141415
+    const GRAY_COOL: Rgb = [0.20, 0.21, 0.23];   // -> rgb(28, 29, 32)  #1c1d20
+    const GRAY_MID:  Rgb = [0.24, 0.24, 0.25];   // -> rgb(34, 34, 35)  #222223
+    const GRAY_WARM: Rgb = [0.27, 0.26, 0.25];   // -> rgb(38, 36, 35)  #262423
+
+    PAIRS: deep->cool, cool->mid, mid->warm, warm->deep
+    LEVEL stays 0.55; the +22% sine warp pushes the lightest pixel to ~rgb(46, 44, 43),
+    so the field now lives in a #101011 .. #2e2d2c band instead of jewel tones.
+
+    wrapper background .......... #0b0b0c   (was #05060b)
+    glow 1 (top-left) ........... rgba(226, 229, 234, 0.06)   (was rgba(88, 70, 168, 0.15))
+    glow 2 (right) .............. rgba(214, 218, 224, 0.05)   (was rgba(40, 52, 144, 0.14))
+    glow 3 (bottom-left) ........ rgba(236, 238, 241, 0.05)   (was rgba(18, 98, 86, 0.12))
+    canvas vignette ............. rgba(6,6,7,0) / rgba(6,6,7,0.1) / rgba(4,4,5,0.5)
+    full-screen vignette ........ rgba(5,5,6,0.32) 78%, rgba(4,4,5,0.72) 100%
+    grain overlays .............. both now desaturated (saturate 0); opacity 0.42 / 0.2
+    canvas / SCALE / FRAME_MS ... unchanged (scale-[1.12], blur 26/56px, 1/8 res, 30fps)
+
+--------------------------------------------------------------------------------
+2. app/globals.css
+--------------------------------------------------------------------------------
+    .orbit--loose .orbit__ring .......... rgba(226, 229, 234, 0.075)   (was bluish)
+    .orbit__trail background ............ #dfe4ea        (was #bfe6ff)
+    .orbit__trail box-shadow ............ rgba(214, 224, 235, 0.32)
+    .orbit--p1 --planet-core ........... #e8ecef   --planet-glow rgba(226, 232, 238, 0.32)
+    .orbit--p2 --planet-core ........... #cfd4da   --planet-glow rgba(200, 207, 214, 0.3)
+    .orbit--p3 --planet-core ........... #f1f3f5   --planet-glow rgba(238, 241, 244, 0.28)
+    .orbit--outer --planet-core ........ #d9dee3   --planet-glow rgba(210, 218, 226, 0.32)
+    :root --background / --foreground ... #0b0b0c / #ededed   (was #ffffff / #171717)
+    dark-scheme --background ............ #0a0a0b
+    .text-glow (warm accent) ............ left as-is: rgba(252, 255, 210, 0.9)
+
+--------------------------------------------------------------------------------
+3. app/components/ui/BGTile.tsx — tile surface (now a whiter gray)
+--------------------------------------------------------------------------------
+    className="absolute inset-0 z-0 rounded-[35px] opacity-90
+               border border-white/10
+               bg-[rgb(70,71,75)]            <- #46474b, was rgb(52,52,52) #343434
+               shadow-[inset_0_1px_0_rgba(255,255,255,0.12),inset_0_0_12px_rgba(255,255,255,0.05)]"
+
+    Effective fill (90% over the average field) = rgb(66, 67, 71).
+    Used by: Tile.tsx, Section.tsx (blurred side tiles) and Header.tsx (nav pill).
+
+--------------------------------------------------------------------------------
+4. Measured contrast (WCAG relative luminance, verified with a script)
+--------------------------------------------------------------------------------
+                                              NEW        (old reference)
+    tile / average field ................   1.61 : 1     (blended into the jewel field)
+    tile / brightest background pixel ....  1.41 : 1
+    tile / darkest background pixel ......  1.86 : 1
+    tile / base #0b0b0c ..................  1.99 : 1     1.51 : 1 (old base)
+    white body text / tile ...............  9.88 : 1     9.6 : 1
+    dim nav text (white/30) / tile .......  2.34 : 1
+
+    Old palette measured 1.07 : 1 (tile vs crimson) and 1.14 : 1 (tile vs indigo):
+    the tiles and the field had almost the same brightness but opposite saturation,
+    which is what made the tiles read as flat cut-outs / too much contrast.
+    Now both sit on the same neutral ramp, so the tiles separate by a gentle step
+    rather than a hue clash; white text keeps a ~9.9:1 ratio on the tile.
+
+--------------------------------------------------------------------------------
+5. Build / runtime verification
+--------------------------------------------------------------------------------
+    npx tsc --noEmit .................... exit 0
+    GET http://localhost:3000/ .......... 200
+    SSR HTML ............................ contains bg-[#0b0b0c], bg-[rgb(70,71,75)], border-white/10
+    compiled CSS ........................ .bg-\[rgb\(70\,71\,75\)\]  -> background-color:#46474b
+                                          .bg-\[\#0b0b0c\]         -> background-color:#0b0b0c
+                                          .border-white\/10        -> border-color:#ffffff1a
+                                          .orbit--outer            -> --planet-core:#d9dee3
+    NOTE: the Next/Turbopack dev server watcher debounced a rapid burst of globals.css
+          edits and briefly served a stale chunk; a follow-up content edit forced the
+          rebuild, so the running dev server now serves the gray theme. A hard refresh
+          (Cmd+Shift+R) is enough to see it -- no restart needed.
+================================================================================

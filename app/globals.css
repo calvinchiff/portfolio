@@ -5,13 +5,13 @@
 }
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+	--background: #0b0b0c;
+	--foreground: #ededed;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0a0a0a;
+		--background: #0a0a0b;
 		--foreground: #ededed;
 	}
 }
@@ -107,5 +107,191 @@ body {
 	.scrollbar-none {
 		-ms-overflow-style: none;
 		scrollbar-width: none;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+   Orbital background system
+   Three concentric circles are centred and completely static. Everything that
+   moves — the loose circle that orbits them, the planets riding the lines and
+   the single trailing moon — is its own wrapper rotated about the centre, so
+   the geometry stays put while the bodies travel. Transform/opacity only.
+   --------------------------------------------------------------------------- */
+
+/* A wrapper is a 1x1 point pinned to the centre of the viewport. Rings and
+   planets are positioned relative to that point, so nothing animates a
+   wrapper's own transform and the circles can never drift. */
+.orbit {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 1px;
+	height: 1px;
+}
+
+/* --- the three static circles -------------------------------------------------
+   Two fit the viewport entirely, the third deliberately runs off the edges. */
+.orbit__ring {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 9999px;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.orbit--1 .orbit__ring {
+	width: 158vmin;
+	height: 158vmin;
+	border-color: rgba(255, 255, 255, 0.07);
+}
+
+.orbit--2 .orbit__ring {
+	width: 112vmin;
+	height: 112vmin;
+	border-color: rgba(255, 255, 255, 0.055);
+}
+
+.orbit--3 .orbit__ring {
+	width: 74vmin;
+	height: 74vmin;
+	border-color: rgba(255, 255, 255, 0.045);
+}
+
+/* --- the loose circle that orbits the three big ones -------------------------- */
+.orbit--loose {
+	animation: orbit-spin 130s linear infinite;
+}
+
+.orbit--loose .orbit__ring {
+	width: 128vmin;
+	height: 128vmin;
+	border-color: rgba(226, 229, 234, 0.075);
+}
+
+/* A single small moon trailing on that loose circle. It lives in its own
+   counter-rotated wrapper, so it stays upright while the circle carries it. */
+.orbit__trail {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 7px;
+	height: 7px;
+	margin: -3.5px 0 0 -3.5px;
+	border-radius: 9999px;
+	background: #dfe4ea;
+	box-shadow: 0 0 12px 2px rgba(214, 224, 235, 0.32);
+	animation: orbit-counter 130s linear infinite;
+	animation-delay: -16.25s;
+}
+
+@keyframes orbit-counter {
+	from {
+		transform: translateY(-64vmin) rotate(0deg);
+	}
+
+	to {
+		transform: translateY(-64vmin) rotate(-360deg);
+	}
+}
+
+/* --- planets riding the circles ----------------------------------------------
+   Each planet sits at the top of its orbit radius and is counter-rotated by its
+   spin keyframes, so the body stays upright while it travels the circle. */
+.orbit__planet {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: var(--planet-size);
+	height: var(--planet-size);
+	margin: calc(var(--planet-size) / -2) 0 0 calc(var(--planet-size) / -2);
+	border-radius: 9999px;
+	background: var(--planet-core);
+	box-shadow: 0 0 16px 2px var(--planet-glow);
+}
+
+.orbit--p1 {
+	--planet-size: 12px;
+	--planet-core: #e8ecef;
+	--planet-glow: rgba(226, 232, 238, 0.32);
+	animation: orbit-spin 88s linear infinite;
+}
+
+.orbit--p2 {
+	--planet-size: 9px;
+	--planet-core: #cfd4da;
+	--planet-glow: rgba(200, 207, 214, 0.3);
+	animation: orbit-spin 62s linear infinite reverse;
+}
+
+.orbit--p3 {
+	--planet-size: 7px;
+	--planet-core: #f1f3f5;
+	--planet-glow: rgba(238, 241, 244, 0.28);
+	animation: orbit-spin 40s linear infinite;
+}
+
+/* Each body hangs off its wrapper's top edge at the radius of the circle, and is
+   counter-rotated by the same keyframes so the body never turns. Without that
+   counter-rotation the offset would be rotated away and the body would simply
+   sit in the middle, invisible. Negative delays scatter the start angles. */
+.orbit--p1 .orbit__planet,
+.orbit--p2 .orbit__planet,
+.orbit--p3 .orbit__planet,
+.orbit--outer .orbit__planet {
+	animation: orbit-spin 1s linear infinite;
+}
+
+.orbit--p1 .orbit__planet {
+	--orbit-radius: 79vmin;
+	animation-duration: 88s;
+	animation-delay: -5.4s;
+}
+
+.orbit--p2 .orbit__planet {
+	--orbit-radius: 56vmin;
+	animation-duration: 62s;
+	animation-delay: -29.4s;
+	animation-direction: reverse;
+}
+
+.orbit--p3 .orbit__planet {
+	--orbit-radius: 37vmin;
+	animation-duration: 40s;
+	animation-delay: -33.2s;
+}
+
+/* --- one light-gray body sweeping right around all three circles ------------- */
+.orbit--outer {
+	--planet-size: 10px;
+	--planet-core: #d9dee3;
+	--planet-glow: rgba(210, 218, 226, 0.32);
+	animation: orbit-spin 150s linear infinite;
+}
+
+.orbit--outer .orbit__planet {
+	--orbit-radius: 62vmin;
+	animation-duration: 150s;
+}
+
+/* Rotating a wrapper about the shared centre carries its child around the
+   circle; the counter-rotation in `to` keeps the child's own orientation. */
+@keyframes orbit-spin {
+	from {
+		transform: translateY(calc(-1 * var(--orbit-radius, 0px))) rotate(0deg);
+	}
+
+	to {
+		transform: translateY(calc(-1 * var(--orbit-radius, 0px))) rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.orbit--loose,
+	.orbit--p1,
+	.orbit--p2,
+	.orbit--p3,
+	.orbit--outer {
+		animation: none;
 	}
 }
