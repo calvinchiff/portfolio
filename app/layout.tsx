@@ -6,6 +6,7 @@ import { ScrollProvider } from "@/app/utils/ScrollContext";
 import AnimatedWrapper from "@/app/utils/AnimatedWrapper";
 import AnalyticsWrapper from "./utils/AnalyticsWrapper";
 import CRTFilter from "@/app/components/ui/CRTFilter";
+import ScreenCurve from "@/app/components/ui/ScreenCurve";
 
 const exo = Exo({
 	variable: "--font-exo",
@@ -53,14 +54,22 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="scroll-smooth">
 			<body className={`${exo.variable} antialiased`}>
-				<CRTFilter>
-					<AnalyticsWrapper>
-						<AnimatedWrapper>
-							<ScrollProvider>{children}</ScrollProvider>
-						</AnimatedWrapper>
-						<BGDepth />
-					</AnalyticsWrapper>
-				</CRTFilter>
+				{/* Two independent screen effects, nested outermost first — remove
+				    either one on its own:
+				      ScreenCurve = convex-glass curvature (barrel warp)
+				      CRTFilter   = static pixel grid (scanlines + RGB subpixels)
+				    `ScreenTilt.tsx` (perspective + rotateX) is kept on disk but not
+				    mounted — wrap it around CRTFilter to bring the tilt back. */}
+				<ScreenCurve>
+					<CRTFilter>
+						<AnalyticsWrapper>
+							<AnimatedWrapper>
+								<ScrollProvider>{children}</ScrollProvider>
+							</AnimatedWrapper>
+							<BGDepth />
+						</AnalyticsWrapper>
+					</CRTFilter>
+				</ScreenCurve>
 			</body>
 		</html>
 	);
