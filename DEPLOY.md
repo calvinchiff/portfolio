@@ -67,8 +67,11 @@ Deux options :
 
 - **Recommandé — rendre le paquet public.** GitHub → profil → *Packages* →
   `portfolio` → *Package settings* → *Change visibility* → **Public**.
-  Puis sur le Pi : `docker logout ghcr.io`. Le problème d'expiration disparaît
-  définitivement, et l'image ne contient que des fichiers déjà publics.
+  Puis sur le Pi : **`docker logout ghcr.io`**. C'est indispensable : si un ancien
+  jeton reste stocké, Docker l'envoie quand même, le registre répond `denied` et
+  il **ne retombe pas** sur l'accès anonyme — même pour un paquet public. Après le
+  logout : plus aucun jeton, plus d'expiration, et l'image ne contient que des
+  fichiers déjà publics.
 - **Garder privé.** Créer un jeton (*fine-grained* avec *Packages: read*, ou
   classique `read:packages`), copier sa valeur **tout de suite** (elle n'est
   affichée qu'une fois), faire `docker login ghcr.io -u calvinchiff` sur le Pi
@@ -98,4 +101,28 @@ différentes, pour deux machines et deux services différents.
 À chaque déploiement : les couches non étiquetées sont supprimées, et seules les
 **5** dernières images `sha-*` de ce dépôt sont conservées. Les images des autres
 conteneurs du Pi ne sont jamais touchées.
+
+## Si le build arm64 plante sous QEMU
+
+Le runner GitHub est en x64 : produire une image arm64 se fait par émulation
+QEMU, et `npm ci` peut y mourir avec :
+
+```text
+qemu: uncaught target signal 4 (Illegal instruction) - core dumped
+```
+
+Ce n'est pas le code du site, c'est l'émulation. C'est pour ça que le Dockerfile
+part de `node:20-bookworm-slim` (glibc) et non d'`alpine` (musl) : la toolchain
+musl est la cause connue de ce plantage.
+
+Si ça recommence, deux issues :
+
+1. **Construire sur le Pi** (le plus fiable) : il est arm64, donc aucun émulateur
+   n'est nécessaire. Le workflow ne fait alors plus de `docker build` sur le
+   runner mais un `git pull && docker build` en SSH sur le Pi.
+2. **Construire sans émulation** : mettre l'étage de build en
+   `FROM --platform=$BUILDPLATFORM node:20-bookworm-slim` pour qu'il tourne
+   nativement sur le runner. Attention alors à `sharp` (dépendance native tirée
+   par Next) : il faut aussi le binaire arm64 dans l'étage de build, sinon
+   l'optimisation d'images casse à l'exécution.
 
