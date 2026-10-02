@@ -5,7 +5,7 @@ import BGDepth from "@/app/components/ui/BGDepth";
 import { ScrollProvider } from "@/app/utils/ScrollContext";
 import AnimatedWrapper from "@/app/utils/AnimatedWrapper";
 import AnalyticsWrapper from "./utils/AnalyticsWrapper";
-// import CRTFilter from "@/app/components/ui/CRTFilter";
+import CRTFilter from "@/app/components/ui/CRTFilter";
 
 const exo = Exo({
 	variable: "--font-exo",
@@ -53,14 +53,14 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="scroll-smooth">
 			<body className={`${exo.variable} antialiased`}>
-				{/* <CRTFilter> */}
-				<AnalyticsWrapper>
-					<AnimatedWrapper>
-						<ScrollProvider>{children}</ScrollProvider>
-					</AnimatedWrapper>
-					<BGDepth />
-					{/* </CRTFilter> */}
-				</AnalyticsWrapper>
+				<CRTFilter>
+					<AnalyticsWrapper>
+						<AnimatedWrapper>
+							<ScrollProvider>{children}</ScrollProvider>
+						</AnimatedWrapper>
+						<BGDepth />
+					</AnalyticsWrapper>
+				</CRTFilter>
 			</body>
 		</html>
 	);

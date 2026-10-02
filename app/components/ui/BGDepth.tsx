@@ -46,8 +46,34 @@ const LEVEL = 0.55;
 /** The palette is normalised, the canvas buffer is 8-bit. */
 const TO_BYTE = 255;
 
+/**
+ * Parallax travel per layer, as a fraction of the viewport height. `scroll` is
+ * the drift at the very end of the page, `pointer` the drift at the edge of the
+ * screen. The farther a layer sits, the less it moves: the colour field is the
+ * backdrop, the orbits the nearest plane. Positive values lift the layers as the
+ * page goes down — flipping every sign flips the whole effect. Set a value to 0
+ * to freeze a layer.
+ */
+const PARALLAX = {
+	field: { scroll: 0.05, pointer: 0.006 },
+	glows: { scroll: 0.13, pointer: 0.015 },
+	orbits: { scroll: 0.19, pointer: 0.0225 }
+};
+
+/** One parallax plane: the wrapper to move, its travel and its last position. */
+type ParallaxLayer = {
+	el: HTMLDivElement;
+	scroll: number;
+	pointer: number;
+	x: number;
+	y: number;
+};
+
 export default function BGDepth() {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
+	const fieldRef = useRef<HTMLDivElement | null>(null);
+	const glowRef = useRef<HTMLDivElement | null>(null);
+	const orbitRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -182,17 +208,118 @@ export default function BGDepth() {
 		};
 	}, []);
 
+	// Parallax: read the scroller every frame instead of listening for scroll
+	// events. The page scrolls inside <main> (scroll events do not bubble) and
+	// polling one known element costs nothing next to the canvas loop that is
+	// already running. The pointer adds depth, so the movement shows even when
+	// the page is not being scrolled. One rAF loop eases the targets and writes
+	// a single transform per layer, skipping the write once it has settled.
+	useEffect(() => {
+		const layers: ParallaxLayer[] = [];
+		const addLayer = (
+			el: HTMLDivElement | null,
+			travel: { scroll: number; pointer: number }
+		) => {
+			if (el) {
+				layers.push({ el, scroll: travel.scroll, pointer: travel.pointer, x: 0, y: 0 });
+			}
+		};
+		addLayer(fieldRef.current, PARALLAX.field);
+		addLayer(glowRef.current, PARALLAX.glows);
+		addLayer(orbitRef.current, PARALLAX.orbits);
+		if (layers.length === 0) return;
+
+		// Visitors who ask for less motion keep a damped version rather than none.
+		const reduceMotion =
+			typeof window.matchMedia === "function" &&
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const motionScale = reduceMotion ? 0.35 : 1;
+
+		let scroller: Element | null = document.querySelector("main");
+		let targetScroll = 0;
+		let currentScroll = 0;
+		let targetX = 0;
+		let targetY = 0;
+		let currentX = 0;
+		let currentY = 0;
+		let frame = 0;
+		let running = true;
+
+		const readScroll = () => {
+			if (!scroller || !scroller.isConnected) {
+				scroller = document.querySelector("main");
+			}
+			const el = scroller ?? document.scrollingElement;
+			if (!el) return;
+			const max = el.scrollHeight - el.clientHeight;
+			targetScroll = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
+		};
+
+		const onPointerMove = (event: PointerEvent) => {
+			targetX = (event.clientX / window.innerWidth) * 2 - 1;
+			targetY = (event.clientY / window.innerHeight) * 2 - 1;
+		};
+
+		const onVisibility = () => {
+			running = !document.hidden;
+		};
+
+		const loop = () => {
+			frame = window.requestAnimationFrame(loop);
+			if (!running) return;
+
+			readScroll();
+			currentScroll += (targetScroll - currentScroll) * 0.075;
+			currentX += (targetX - currentX) * 0.06;
+			currentY += (targetY - currentY) * 0.06;
+
+			const height = window.innerHeight * motionScale;
+			for (const layer of layers) {
+				const x = -currentX * layer.pointer * height;
+				const y =
+					-currentScroll * layer.scroll * height - currentY * layer.pointer * height;
+				if (Math.abs(x - layer.x) < 0.05 && Math.abs(y - layer.y) < 0.05) {
+					continue;
+				}
+				layer.x = x;
+				layer.y = y;
+				layer.el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(
+					2
+				)}px, 0)`;
+			}
+		};
+
+		frame = window.requestAnimationFrame(loop);
+		window.addEventListener("pointermove", onPointerMove, { passive: true });
+		document.addEventListener("visibilitychange", onVisibility);
+
+		return () => {
+			window.cancelAnimationFrame(frame);
+			window.removeEventListener("pointermove", onPointerMove);
+			document.removeEventListener("visibilitychange", onVisibility);
+		};
+	}, []);
+
 	return (
 		<div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#0b0b0c]">
-			{/* 1. colour field: the drifting dark gray tones */}
-			<canvas
-				ref={canvasRef}
-				aria-hidden="true"
-				className="h-full w-full scale-[1.12] blur-[26px] md:blur-[56px]"
-			/>
+			{/* 1. colour field: the drifting dark gray tones. Each parallax plane is
+			       wrapped, so only the wrapper moves — the canvas keeps its own
+			       scale/blur and the orbit geometry is never touched. */}
+			<div ref={fieldRef} className="absolute inset-0 will-change-transform">
+				{/* scaled past the frame so the parallax travel never exposes an edge */}
+				<canvas
+					ref={canvasRef}
+					aria-hidden="true"
+					className="h-full w-full scale-[1.2] blur-[26px] md:blur-[56px]"
+				/>
+			</div>
 
 			{/* 2. depth: soft glows washing the corners (kept dim now) */}
-			<div aria-hidden="true" className="absolute inset-0">
+			<div
+				ref={glowRef}
+				aria-hidden="true"
+				className="absolute inset-0 will-change-transform"
+			>
 				<div className="absolute -left-[12%] top-[4%] h-[62vmin] w-[62vmin] rounded-full bg-[radial-gradient(circle,rgba(226,229,234,0.06),transparent_66%)] blur-[60px]" />
 				<div className="absolute -right-[14%] top-[34%] h-[56vmin] w-[56vmin] rounded-full bg-[radial-gradient(circle,rgba(214,218,224,0.05),transparent_66%)] blur-[70px]" />
 				<div className="absolute bottom-[-16%] left-[26%] h-[64vmin] w-[64vmin] rounded-full bg-[radial-gradient(circle,rgba(236,238,241,0.05),transparent_68%)] blur-[70px]" />
@@ -201,7 +328,11 @@ export default function BGDepth() {
 			{/* 3. the system: three fixed concentric circles — two fully on screen, the
 			       third running off the edges. A loose circle orbits them, and each
 			       ring carries a planet. Only the bodies ever move. */}
-			<div aria-hidden="true" className="absolute inset-0">
+			<div
+				ref={orbitRef}
+				aria-hidden="true"
+				className="absolute inset-0 will-change-transform"
+			>
 				<div className="orbit orbit--1">
 					<span className="orbit__ring" />
 				</div>
