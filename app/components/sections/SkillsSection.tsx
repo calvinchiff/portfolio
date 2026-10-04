@@ -45,7 +45,7 @@ export default function SkillsSection() {
 								}`}
 							>
 								{tile.skills.map((skill) => (
-									<div key={skill.icon} className="group flex flex-col">
+									<div key={skill.name.en} className="group flex flex-col">
 										<div className="group flex flex-row">
 											<div
 												className={`relative transition-all duration-300 ${
