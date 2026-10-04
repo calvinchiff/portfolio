@@ -3,16 +3,47 @@
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage{geometry}
+\usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{titlesec}
 
-\geometry{left=1.5cm, right=1.5cm, top=1.5cm, bottom=1.5cm}
+\geometry{left=1.4cm, right=1.4cm, top=1.4cm, bottom=1.4cm}
 
-\titleformat{\section}{\large\bfseries\color{blue!40!black}}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{5pt}
+\definecolor{cvaccent}{RGB}{26,54,93}
 
-\hypersetup{colorlinks=true, urlcolor=blue!50!black}
+% No first-line indent anywhere: entry titles, organisations and bullets all
+% start on the same left edge (this is what made the titles look shifted).
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+\titleformat{\section}{\large\bfseries\color{cvaccent}}{}{0em}{}[\vspace{2pt}\titlerule]
+\titlespacing{\section}{0pt}{9pt}{5pt}
+
+\hypersetup{colorlinks=true, urlcolor=cvaccent}
+
+% A single list style for the whole document: small bullet, tight and even
+% spacing, item text aligned a hair right of the entry titles.
+\newlist{cvlist}{itemize}{1}
+\setlist[cvlist]{
+	leftmargin=1.2em,
+	labelsep=0.5em,
+	label={\scriptsize\textbullet},
+	itemsep=1pt,
+	parsep=0pt,
+	topsep=2pt,
+	partopsep=0pt
+}
+
+% One entry shape shared by Experience and Education:
+%   \cventry{Title}{Dates}{Organisation, Location}
+% The title is the flush-left anchor; the organisation line is indented to line
+% up with the bullet text.
+\newcommand{\cventry}[3]{%
+	\vspace{3pt}%
+	\noindent\textbf{#1}\hfill\textbf{#2}\\[1pt]
+	\noindent\hspace{1.2em}\textit{#3}\par\vspace{1pt}%
+}
 
 \begin{document}
 
@@ -20,81 +51,65 @@
 
 % HEADER
 \begin{center}
-    {\huge \textbf{Calvin Chiffot}} \\[4pt]
-    {\large \textbf{Software Engineer - Security \& Test}} \\[6pt]
-    \small
-    \href{tel:+33781373227}{+33 7 81 37 32 27} | 
-    \href{mailto:calvinchiffot@protonmail.com}{calvinchiffot@protonmail.com} | 
-    Open to international opportunities | 
-    \href{https://calvinchiff.com}{calvinchiff.com}
+	{\huge \textbf{Calvin Chiffot}}\\[4pt]
+	{\large \textbf{Software Engineer - Security \& Testing}}\\[6pt]
+	\small
+	\href{tel:+33781373227}{+33 7 81 37 32 27} \,|\, 
+	\href{mailto:calvinchiffot@protonmail.com}{calvinchiffot@protonmail.com} \,|\, 
+	Open to international opportunities \,|\, 
+	\href{https://calvinchiff.com}{calvinchiff.com}
 \end{center}
-
-\vspace{-10pt}
 
 % PROFILE
 \section{Profile}
-Passionate software developer with a keen interest in emerging technologies. I aim to join a dynamic company that would allow me to apply my knowledge, explore various development topics and technologies, as well as continue learning and expanding my skills.
+Passionate software engineer with a keen interest in emerging technologies. I aim to join a dynamic company where I can apply my knowledge, explore various development topics and keep learning.
 
 % PROFESSIONAL EXPERIENCE
 \section{Professional Experience}
 
-\textbf{Consultant Software Engineer - Security \& Testing} \hfill \textbf{2026 -- 2028} \\
-\textit{T\&S, Stuttgart, Germany}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Test Framework \& Architecture (Bosch eBike Systems) :} Designed and built a custom end-to-end (E2E) automated testing framework using \texttt{pytest} to validate a complete connected e-bike ecosystem.
-    \item \textbf{Embedded \& Hardware Testing :} Implemented low-level test scenarios to assess the robustness, communication protocols, and security of embedded components and firmware.
-    \item \textbf{Backend & Security Testing :} Conducted security audits and automated integration testing across cloud APIs and backend services to ensure data pipeline integrity.
-\end{itemize}
-\vspace{4pt}
+\cventry{Consultant Software Engineer - Security \& Testing}{2026 -- 2028}{T\&S, Stuttgart, Germany}
+\begin{cvlist}
+	\item Test framework \& architecture (Bosch eBike Systems): designed and built a custom end-to-end (E2E) automation framework in \texttt{pytest} to validate a complete connected e-bike ecosystem.
+	\item Embedded \& hardware testing: implemented low-level test scenarios to assess robustness, communication protocols and firmware security.
+	\item Backend \& security testing: security audits and automated integration testing across cloud APIs and backend services to guarantee data pipeline integrity.
+\end{cvlist}
 
-\textbf{Developer Consultant Work-Study} \hfill \textbf{2023 -- 2024} \\
-\textit{LTTD Consulting, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Designed and developed web applications using Angular, deployed as customized screens within the ERP Infor M3 as part of a development team.
-    \item Worked closely with clients to manage projects and update existing applications.
-\end{itemize}
-\vspace{4pt}
+\cventry{Developer Consultant Work-Study}{2023 -- 2024}{LTTD Consulting, Saint-Herblain, France}
+\begin{cvlist}
+	\item Designed and developed web applications using Angular, deployed as custom screens within the Infor M3 ERP, as part of a development team.
+	\item Worked closely with clients to manage projects and update existing applications.
+\end{cvlist}
 
-\textbf{Software Developer Work-Study} \hfill \textbf{2021 -- 2022} \\
-\textit{SCC France, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Designed, developed, and implemented an automated data ingestion tool using Azure Data Factory and SQL to optimize the data processing workflow.
-    \item Designed and developed front-end and back-end web applications using HTML/CSS, JavaScript, and Node.js.
-    \item Managed cloud deployment using AWS and GitHub Actions to ensure continuous delivery.
-\end{itemize}
-\vspace{4pt}
+\cventry{Software Developer Work-Study}{2021 -- 2022}{SCC France, Saint-Herblain, France}
+\begin{cvlist}
+	\item Designed, developed and implemented an automated data ingestion tool using Azure Data Factory and SQL to optimise the data processing workflow.
+	\item Designed and developed front-end and back-end web applications using HTML/CSS, JavaScript and Node.js.
+	\item Managed cloud deployment using AWS and GitHub Actions to ensure continuous delivery.
+\end{cvlist}
 
-\textbf{Software Developer / DevOps Intern} \hfill \textbf{2021 (11 weeks)} \\
-\textit{Arkéa, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Managed the integration and deployment of internal tools using Jenkins, Docker, DBMaintain, and Liquibase.
-\end{itemize}
+\cventry{Software Developer / DevOps Intern}{2021 (11 weeks)}{Arkéa, Saint-Herblain, France}
+\begin{cvlist}
+	\item Managed the integration and deployment of internal tools using Jenkins, Docker, DBMaintain and Liquibase.
+\end{cvlist}
 
 % EDUCATION
 \section{Education}
-\textbf{Master in Computer Science and Information Systems Engineering} \hfill \textbf{2022 -- 2024} \\
-EPSI Nantes \vspace{3pt}
 
-\textbf{Bachelor in Software Engineering, DevOps (CDA)} \hfill \textbf{2021 -- 2022} \\
-EPSI Nantes \vspace{3pt}
-
-\textbf{DUT in Computer Science} \hfill \textbf{2019 -- 2021} \\
-University Institute of Technology of Vannes
+\cventry{Master in Computer Science and Information Systems Engineering}{2022 -- 2024}{EPSI Nantes, France}
+\cventry{Bachelor in Software Engineering, DevOps (CDA)}{2021 -- 2022}{EPSI Nantes, France}
+\cventry{DUT in Computer Science}{2019 -- 2021}{University Institute of Technology of Vannes, France}
 
 % SKILLS
 \section{Technical Skills}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Languages \& Web :} JavaScript / TypeScript (NodeJS, Express, React, Next), HTML5/CSS, Python / Pytest, C++, SQL, Git
-    \item \textbf{Cloud \& DevOps :} AWS, Azure, GCP, Docker, Kubernetes, Linux, Nginx, CI/CD (GitHub Actions)
-    \item \textbf{Methods :} Agile software development, E2E automation \& security testing
-\end{itemize}
+\textbf{Languages \& web:} JavaScript / TypeScript (Node.js, Express, React, Next.js), HTML5/CSS, Python / pytest, C++, SQL, Git\\[2pt]
+\textbf{DevOps:} Docker, Kubernetes, Linux, Nginx, CI/CD (GitHub Actions, Jenkins), AWS, Azure, GCP\\[2pt]
+\textbf{Methods:} Agile software development, E2E automation and security testing
 
 % CERTIFICATIONS, LANGUAGES & INTERESTS
 \section{Certificates, Languages \& Interests}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Certificates :} CS50's Introduction to Artificial Intelligence with Python (In progress, HarvardX)
-    \item \textbf{Languages :} French (Native), English (C2 - TOEIC: 980/990 + Cambridge FCE), German (B1)
-    \item \textbf{Interests :} Driving license (Class B) + Car | Robotics, Electric guitar, Calisthenics, Car \& motorcycle enthusiast, Physical sciences
-\end{itemize}
+\textbf{Certificates:} CS50's Introduction to Artificial Intelligence with Python (in progress, HarvardX)\\[2pt]
+\textbf{Languages:} French (native), English (C2 -- TOEIC 980/990 + Cambridge FCE), German (B1)\\[2pt]
+\textbf{Interests:} Robotics \& embodied AI (HRL/MARL), electric guitar, calisthenics, athletics, motorcycle, physical sciences, space \& aerospace\\[2pt]
+\textbf{Driving licence:} class B + car
 
 \end{document}
