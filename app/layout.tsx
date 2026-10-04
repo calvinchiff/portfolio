@@ -7,6 +7,9 @@ import AnimatedWrapper from "@/app/utils/AnimatedWrapper";
 import AnalyticsWrapper from "./utils/AnalyticsWrapper";
 import CRTFilter from "@/app/components/ui/CRTFilter";
 import ScreenCurve from "@/app/components/ui/ScreenCurve";
+import Preloader from "@/app/components/ui/Preloader";
+import ContentReveal from "@/app/components/ui/ContentReveal";
+import { LoadingProvider } from "@/app/utils/LoadingContext";
 
 const exo = Exo({
 	variable: "--font-exo",
@@ -54,22 +57,29 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="scroll-smooth">
 			<body className={`${exo.variable} antialiased`}>
-				{/* Two independent screen effects, nested outermost first — remove
-				    either one on its own:
-				      ScreenCurve = convex-glass curvature (barrel warp)
-				      CRTFilter   = static pixel grid (scanlines + RGB subpixels)
-				    `ScreenTilt.tsx` (perspective + rotateX) is kept on disk but not
-				    mounted — wrap it around CRTFilter to bring the tilt back. */}
-				<ScreenCurve>
-					<CRTFilter>
-						<AnalyticsWrapper>
-							<AnimatedWrapper>
-								<ScrollProvider>{children}</ScrollProvider>
-							</AnimatedWrapper>
-							<BGDepth />
-						</AnalyticsWrapper>
-					</CRTFilter>
-				</ScreenCurve>
+				<LoadingProvider>
+					{/* Three independent screen effects, nested outermost first — remove
+					    either one on its own:
+					      ScreenCurve = convex-glass curvature (barrel warp)
+					      CRTFilter   = static pixel grid (scanlines + RGB subpixels)
+					    `ScreenTilt.tsx` (perspective + rotateX) is kept on disk but not
+					    mounted — wrap it around CRTFilter to bring the tilt back.
+					    The preloader sits inside them so both effects are live from the
+					    first frame; only the content (not the background) waits. */}
+					<ScreenCurve>
+						<CRTFilter>
+							<AnalyticsWrapper>
+								<ContentReveal>
+									<AnimatedWrapper>
+										<ScrollProvider>{children}</ScrollProvider>
+									</AnimatedWrapper>
+								</ContentReveal>
+								<BGDepth />
+							</AnalyticsWrapper>
+							<Preloader />
+						</CRTFilter>
+					</ScreenCurve>
+				</LoadingProvider>
 			</body>
 		</html>
 	);
