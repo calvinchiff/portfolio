@@ -48,19 +48,21 @@ export const projectsData = {
 				date: "03-2024",
 				techno: "Node.js, MySQL, Sequelize, Docker, GCP, GitHub Actions",
 				state: { en: "Done", fr: "Terminé" }
-			}
-		],
-		craft: [
+			},
 			{
-				id: "1",
-				title: { en: "Water level sensor", fr: "Détecteur de niveau d'eau" },
+				id: "4",
+				title: {
+					en: "LLM anonymization gateway",
+					fr: "Sas d’anonymisation pour LLM"
+				},
 				description: {
-					en: "I'm building a wireless sensor system to monitor the water level in my father’s garden tank. The sensor, built with an STM32, measures the water level and transmits the data via 2.4GHz antennas to a second STM32 unit. This receiving unit is connected to Wi-Fi, sends the data to my server, and features a built-in screen that displays the current water level, temperature, and upcoming weather forecasts locally.",
-					fr: "Je développe un système de capteur sans fil pour surveiller le niveau d’eau dans la cuve du jardin de mon père. Le capteur, conçu avec un STM32, mesure le niveau d’eau et transmet les données via des antennes 2.4GHz à une seconde unité STM32. Ce module récepteur est connecté en Wi-Fi, envoie les données à mon serveur, et dispose d’un écran intégré affichant localement le niveau d’eau, la température ainsi que les prévisions météo."
+					en: "A gateway that anonymizes a document before handing it to an LLM (Claude) and restores it on the way back: the model only ever reasons on neutral tokens (<NAME_1>), and the user recovers the real values from a mapping table that never leaves the server. Multi-format (.docx / .pdf / .pptx / .xlsx / images with OCR), three detection strategies (regex baseline, Presidio, hybrid Presidio + GLiNER) compared by a precision/recall/F1 evaluation harness on public FR/EN/DE datasets, plus a drag-and-drop web UI, a CLI, a batch mode and an in-memory vault that is never persisted.",
+					fr: "Un sas qui anonymise un document avant de le confier à un LLM (Claude) puis le restitue au retour : le modèle ne raisonne que sur des jetons neutres (<NOM_1>) et l’utilisateur retrouve ses vraies valeurs via une table de correspondance qui ne quitte jamais le serveur. Multi-format (.docx / .pdf / .pptx / .xlsx / images avec OCR), trois stratégies de détection (baseline regex, Presidio, hybride Presidio + GLiNER) comparées par un harnais d’évaluation précision/rappel/F1 sur des datasets publics FR/EN/DE, plus une interface web en glisser-déposer, une CLI, un mode batch et un coffre en mémoire jamais persisté."
 				},
 				link: "",
-				date: "03-2025",
-				techno: "STM32, C/C++, Next.js, Node.js, MySQL, Docker",
+				date: "10-2026",
+				techno:
+					"Python, FastAPI, pytest, Presidio, spaCy, GLiNER, PyMuPDF, RapidOCR, OCR, P/R/F1 evaluation",
 				state: { en: "In progress", fr: "En cours" }
 			}
 		]
