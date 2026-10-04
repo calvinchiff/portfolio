@@ -3,16 +3,47 @@
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{geometry}
+\usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{titlesec}
 
-\geometry{left=1.5cm, right=1.5cm, top=1.5cm, bottom=1.5cm}
+\geometry{left=1.4cm, right=1.4cm, top=1.4cm, bottom=1.4cm}
 
-\titleformat{\section}{\large\bfseries\color{blue!40!black}}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{5pt}
+\definecolor{cvaccent}{RGB}{26,54,93}
 
-\hypersetup{colorlinks=true, urlcolor=blue!50!black}
+% Aucun retrait de première ligne : titres, organismes et puces démarrent tous
+% sur la même marge gauche (c'est ce qui décalait les titres).
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+\titleformat{\section}{\large\bfseries\color{cvaccent}}{}{0em}{}[\vspace{2pt}\titlerule]
+\titlespacing{\section}{0pt}{9pt}{5pt}
+
+\hypersetup{colorlinks=true, urlcolor=cvaccent}
+
+% Un seul style de liste pour tout le document : petite puce, espacement serré
+% et régulier, texte aligné juste à droite des titres d'entrée.
+\newlist{cvlist}{itemize}{1}
+\setlist[cvlist]{
+	leftmargin=1.2em,
+	labelsep=0.5em,
+	label={\scriptsize\textbullet},
+	itemsep=1pt,
+	parsep=0pt,
+	topsep=2pt,
+	partopsep=0pt
+}
+
+% Une seule forme d'entrée, partagée par les expériences et les formations :
+%   \cventry{Titre}{Dates}{Organisme, Lieu}
+% Le titre est l'ancre à la marge ; la ligne de l'organisme est indentée pour
+% s'aligner sur le texte des puces.
+\newcommand{\cventry}[3]{%
+	\vspace{3pt}%
+	\noindent\textbf{#1}\hfill\textbf{#2}\\[1pt]
+	\noindent\hspace{1.2em}\textit{#3}\par\vspace{1pt}%
+}
 
 \begin{document}
 
@@ -20,81 +51,65 @@
 
 % EN-TÊTE
 \begin{center}
-    {\huge \textbf{Calvin Chiffot}} \\[4pt]
-    {\large \textbf{Ingénieur Logiciel - Sécurité \& Test}} \\[6pt]
-    \small
-    \href{tel:+33781373227}{+33 7 81 37 32 27} | 
-    \href{mailto:calvinchiffot@protonmail.com}{calvinchiffot@protonmail.com} | 
-    Ouvert aux opportunités à l'international | 
-    \href{https://calvinchiff.com}{calvinchiff.com}
+	{\huge \textbf{Calvin Chiffot}}\\[4pt]
+	{\large \textbf{Ingénieur Logiciel - Sécurité \& Test}}\\[6pt]
+	\small
+	\href{tel:+33781373227}{+33 7 81 37 32 27} \,|\, 
+	\href{mailto:calvinchiffot@protonmail.com}{calvinchiffot@protonmail.com} \,|\, 
+	Ouvert aux opportunités à l'international \,|\, 
+	\href{https://calvinchiff.com}{calvinchiff.com}
 \end{center}
-
-\vspace{-10pt}
 
 % PROFIL
 \section{Profil}
-Développeur informatique passionné par les nouvelles technologies. J'ambitionne de rejoindre une entreprise dynamique qui me permettrait d'appliquer mes connaissances, explorer divers sujets de développement et technologies, ainsi que continuer à apprendre et à élargir mes compétences.
+Ingénieur logiciel passionné par les nouvelles technologies. J'ambitionne de rejoindre une entreprise dynamique qui me permettrait d'appliquer mes connaissances, explorer divers sujets de développement et continuer à apprendre.
 
 % EXPÉRIENCES PROFESSIONNELLES
 \section{Expériences Professionnelles}
 
-\textbf{Consultant Ingénieur Logiciel - Sécurité \& Test} \hfill \textbf{2026 -- 2028} \\
-\textit{T\&S, Stuttgart, Allemagne}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Architecture \& Framework (Bosch eBike Systems) :} Conception et développement d'une plateforme de test automatisé end-to-end (E2E) en \texttt{pytest} pour valider l'écosystème global des vélos électriques connectés.
-    \item \textbf{Test Embarqué \& Hardware :} Implémentation de scénarios de test bas niveau pour valider la robustesse, les protocoles de communication et la sécurité des composants et micrologiciels embarqués.
-    \item \textbf{Test Backend \& Sécurité :} Audit de sécurité et automatisation des tests d'intégration sur les APIs et services web cloud pour garantir l'intégrité des flux de données.
-\end{itemize}
-\vspace{4pt}
+\cventry{Consultant Ingénieur Logiciel - Sécurité \& Test}{2026 -- 2028}{T\&S, Stuttgart, Allemagne}
+\begin{cvlist}
+	\item Framework \& architecture de test (Bosch eBike Systems) : conception et développement d'une plateforme de test automatisé end-to-end (E2E) en \texttt{pytest} pour valider l'écosystème complet des vélos électriques connectés.
+	\item Test embarqué \& hardware : scénarios de test bas niveau pour valider la robustesse, les protocoles de communication et la sécurité des micrologiciels.
+	\item Test backend \& sécurité : audits de sécurité et tests d'intégration automatisés sur les APIs cloud et les backends pour garantir l'intégrité des flux de données.
+\end{cvlist}
 
-\textbf{Développeur Consultant en Alternance} \hfill \textbf{2023 -- 2024} \\
-\textit{LTTD Consulting, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Conception et développement d'applications web en Angular, utilisées en tant qu'écrans personnalisés déployés dans l'ERP Infor M3 au sein d'une équipe de développeurs.
-    \item Collaboration étroite avec les clients pour la gestion des projets et les mises à jour des applications.
-\end{itemize}
-\vspace{4pt}
+\cventry{Développeur Consultant en Alternance}{2023 -- 2024}{LTTD Consulting, Saint-Herblain, France}
+\begin{cvlist}
+	\item Conception et développement d'applications web en Angular, intégrées comme écrans personnalisés dans l'ERP Infor M3, au sein d'une équipe de développement.
+	\item Collaboration étroite avec les clients pour la gestion des projets et la mise à jour des applications.
+\end{cvlist}
 
-\textbf{Développeur Concepteur d'Applications en Alternance} \hfill \textbf{2021 -- 2022} \\
-\textit{SCC France, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Conception, développement et mise en œuvre d'un outil d'ingestion de données automatisé avec Azure Data Factory et SQL afin d'optimiser le processus de traitement.
-    \item Développement d'applications web front-end et back-end en utilisant HTML/CSS, JavaScript et Node.js.
-    \item Gestion du déploiement cloud avec AWS et GitHub Actions pour assurer une livraison continue.
-\end{itemize}
-\vspace{4pt}
+\cventry{Développeur Concepteur d'Applications en Alternance}{2021 -- 2022}{SCC France, Saint-Herblain, France}
+\begin{cvlist}
+	\item Conception, développement et mise en œuvre d'un outil d'ingestion de données automatisé avec Azure Data Factory et SQL pour optimiser le traitement.
+	\item Développement d'applications web front-end et back-end en HTML/CSS, JavaScript et Node.js.
+	\item Gestion du déploiement cloud avec AWS et GitHub Actions pour assurer une livraison continue.
+\end{cvlist}
 
-\textbf{Développeur Logiciel / DevOps en Stage} \hfill \textbf{2021 (11 semaines)} \\
-\textit{Arkéa, Saint-Herblain, France}
-\begin{itemize}[leftmargin=*, nosep]
-    \item Gestion de l'intégration et du déploiement d'outils internes en utilisant Jenkins, Docker, DBMaintain et Liquibase.
-\end{itemize}
+\cventry{Développeur Logiciel / DevOps en Stage}{2021 (11 semaines)}{Arkéa, Saint-Herblain, France}
+\begin{cvlist}
+	\item Gestion de l'intégration et du déploiement d'outils internes avec Jenkins, Docker, DBMaintain et Liquibase.
+\end{cvlist}
 
 % FORMATION
 \section{Diplômes \& Formations}
-\textbf{Master en Ingénierie Informatique (EISI)} \hfill \textbf{2022 -- 2024} \\
-EPSI Nantes \vspace{3pt}
 
-\textbf{Bachelor Informatique DevOps (Titre CDA)} \hfill \textbf{2021 -- 2022} \\
-EPSI Nantes \vspace{3pt}
-
-\textbf{DUT en Informatique} \hfill \textbf{2019 -- 2021} \\
-IUT de Vannes
+\cventry{Master en Ingénierie Informatique (EISI)}{2022 -- 2024}{EPSI Nantes, France}
+\cventry{Bachelor Informatique DevOps (Titre CDA)}{2021 -- 2022}{EPSI Nantes, France}
+\cventry{DUT en Informatique}{2019 -- 2021}{IUT de Vannes, France}
 
 % COMPÉTENCES
 \section{Compétences Techniques}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Langages \& Web :} JavaScript / TypeScript (NodeJS, Express, React, Next), HTML5/CSS, Python / Pytest, C++, SQL, Git
-    \item \textbf{Cloud \& DevOps :} AWS, Azure, GCP, Docker, Kubernetes, Linux, Nginx, CI/CD (GitHub Actions)
-    \item \textbf{Méthodes :} Développement logiciel Agile, Tests de sécurité et automatisation E2E
-\end{itemize}
+\textbf{Langages \& web :} JavaScript / TypeScript (Node.js, Express, React, Next.js), HTML5/CSS, Python / pytest, C++, SQL, Git\\[2pt]
+\textbf{DevOps :} Docker, Kubernetes, Linux, Nginx, CI/CD (GitHub Actions, Jenkins), AWS, Azure, GCP\\[2pt]
+\textbf{Méthodes :} développement logiciel Agile, automatisation E2E et tests de sécurité
 
-% CERTIFICATIONS & LANGUES & DIVERS
+% CERTIFICATIONS, LANGUES & CENTRES D'INTÉRÊTS
 \section{Certifications, Langues \& Centres d'intérêts}
-\begin{itemize}[leftmargin=*, nosep]
-    \item \textbf{Certifications :} CS50's Introduction to Artificial Intelligence with Python (En cours, HarvardX)
-    \item \textbf{Langues :} Français (Langue maternelle), Anglais (C2 - TOEIC: 980/990 + Cambridge FCE), Allemand (B1)
-    \item \textbf{Divers :} Permis B + Véhicule | Robotique, Guitare électrique, Callisthénie, Passion auto/moto, Sciences physiques
-\end{itemize}
+\textbf{Certifications :} CS50's Introduction to Artificial Intelligence with Python (en cours, HarvardX)\\[2pt]
+\textbf{Langues :} français (langue maternelle), anglais (C2 -- TOEIC 980/990 + Cambridge FCE), allemand (B1)\\[2pt]
+\textbf{Divers :} robotique \& IA incarnée (HRL/MARL), guitare électrique, callisthénie, athlétisme, moto, sciences physiques, espace \& aérospatial\\[2pt]
+\textbf{Permis :} B + véhicule
 
 \end{document}

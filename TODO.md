@@ -34,25 +34,23 @@ autres outils externes).
 
 ## 📋 À faire
 
-- [ ] **TODO-06 — Ajouter des projets dans la partie Projets**
-  - Données : `public/data/projectsData.tsx` — deux catégories : `projects.dev` et `projects.craft` (l.10 et l.53), plus `contentTitles` pour les libellés de champs.
-  - Chaque entrée porte un `id`, un `title` bilingue `{ en, fr }` et des champs optionnels affichés automatiquement.
+- [ ] **TODO-06 — Refaire la partie Projets et mettre à jour les projets**
+  - Données : `public/data/projectsData.tsx` — catégorie unique `projects.dev` (les catégories `dev`/`craft` ont été fusionnées, TODO-45).
+  - **Déjà fait** (TODO-45) : projet « LLM anonymization gateway » ajouté, projet STM32 retiré, points de pagination cliquables.
+  - Reste : refonte visuelle de la section (mise en page des champs, images, lien GitHub par projet) et relecture des descriptions. À croiser avec TODO-09, TODO-25 et TODO-26.
 
-- [ ] **TODO-07 — Mettre à jour et réécrire les textes**
-  - Fichiers de contenu : `public/data/` → `generalData.tsx`, `skillsData.tsx`, `careerData.tsx`, `projectsData.tsx`, `contactData.tsx`, `footerData.tsx`, `navbarData.tsx`.
+- [ ] **TODO-07 — Poursuivre la mise à jour des textes restants**
+  - Déjà alignés sur le CV LaTeX : `careerData.tsx` (TODO-35, réécrit en bullets concis TODO-49), `skillsData.tsx` (TODO-36/44), `generalData.tsx` (TODO-40/50).
+  - Reste à réécrire : `contactData.tsx` (hors config de la popup CV), `footerData.tsx`, `navbarData.tsx` et une relecture des descriptions de projets (TODO-06).
   - Garder **EN et FR synchronisés** (le site bascule via `app/utils/LanguageContext.tsx`).
-
-- [ ] **TODO-08 — Partie Projets : curseur « projet X sur N »**
-  - `app/components/sections/ProjectsSection.tsx` expose déjà `projectIndex` et `currentProjects.length`.
-  - À ajouter : indicateur visible (compteur `X / N`, points ou barre), remis à zéro au changement de catégorie (`useEffect` existant l.21-23).
 
 - [ ] **TODO-09 — Partie Projets : tuiles latérales qui défilent et prennent la place au centre (ou animation)**
   - Pattern existant à réutiliser : `app/components/ui/Section.tsx` → `renderInvisGrid()` (tuiles latérales floutées, masquées par dégradé).
   - Objectif : faire « entrer » le projet suivant depuis le côté vers la tuile centrale (slide + fondu), avec `prefers-reduced-motion` en repli.
 
-- [ ] **TODO-10 — Corriger les CV LaTeX**
-  - Fichiers : `public/contact/en_CV_CHIFFOT.tex`, `public/contact/fr_CV_CHIFFOT.tex`.
-  - Corriger le contenu, compiler, puis régénérer les PDF servis : `public/contact/en-CV-CHIFFOT_Calvin.pdf`, `public/contact/fr-CV-CHIFFOT_Calvin.pdf`.
+- [ ] **TODO-38 — Compétences en sous-catégories (Web / Backend / Tests / DevOps)**
+  - Idée issue de la discussion du 2026-10-02 : partir du regroupement simple en place (TODO-36), puis éventuellement éclater `technicalSkills` en sous-catégories et afficher **toutes** les compétences en plus petit.
+  - Nécessite d'adapter `app/components/sections/SkillsSection.tsx` (affichage des groupes) et le format de `public/data/skillsData.tsx`.
 
 ---
 
@@ -166,6 +164,107 @@ autres outils externes).
   - **Nettoyage borné** : couches non étiquetées + seules les 5 dernières images `sha-*` de ce dépôt ; les images des autres conteneurs du Pi sont laissées tranquilles.
   - **`DEPLOY.md`** documente le tout, dont le jeton GHCR et les deux options (paquet public, ou jeton renouvelé).
   - Validé : YAML parsé, logique de tags simulée (`main` → 3 tags, tag → 2 tags sans `latest`), syntaxe bash du script de déploiement, logique de nettoyage testée sur données factices.
+- [x] **2026-10-02 — Contact : l'email ne brille qu'au survol de la tuile** (TODO-34) — *(branche `feat/content-cv-update`, à committer)*
+  - `app/components/sections/ContactSection.tsx` : le `<span>` de l'adresse passe de `text-glow` (permanent) à `transition-all duration-150 group-hover:text-glow`.
+  - **Correctif (2ᵉ passe)** : la règle CSS brute ne se déclenchait pas de façon fiable. `text-glow` est désormais une **vraie utilité Tailwind** (`@utility text-glow` dans `app/globals.css`), donc `group-hover:text-glow` emprunte exactement le même mécanisme que `group-hover:opacity-100`.
+  - CSS généré vérifié : `.group-hover\:text-glow:is(:where(.group):hover *){text-shadow:…}`.
+  - **Vérifié dans Brave headless (CDP, `CSS.forcePseudoState`)** : `textShadow` passe de `none` à `rgba(252, 255, 210, 0.9) 0px 0px 15px` quand la tuile est survolée.
+- [x] **2026-10-02 — Expériences (`careerData`) alignées sur le CV LaTeX** (TODO-35) — *(branche `feat/content-cv-update`, à committer)*
+  - La dernière entrée « Self Learning AI » est **remplacée** par l'expérience actuelle : *Consultant Software Engineer - Security & Testing*, T&S, Stuttgart (2026–2028).
+  - Description reprise du CV : framework E2E `pytest` pour Bosch eBike Systems, tests embarqué/hardware et protocoles de communication, audits de sécurité et tests d'intégration des APIs cloud/backends.
+  - Technos : Python, pytest, E2E automation, Security testing, Embedded & hardware, Backend & APIs, CI/CD.
+- [x] **2026-10-02 — Compétences (`skillsData`) : regroupements + stack actuelle** (TODO-36) — *(branche `feat/content-cv-update`, à committer)*
+  - **Retirés** : Angular, Cloud, et les doublons (JS/TS, Git/GitHub Actions, Docker/Linux).
+  - **Regroupés** : JavaScript / TypeScript · React / Next.js · Node.js / Express · SQL (MySQL, PostgreSQL) · Git / GitHub Actions · Docker / Linux · C / C++ (embarqué).
+  - **Ajouté** : Python / pytest (tests E2E, hardware & sécurité) — la stack actuelle prend la place libérée.
+  - `SkillsSection.tsx` : clé de liste passée de `skill.icon` à `skill.name.en` (deux compétences partagent désormais l'icône `More_icon`).
+  - Mise en page volontairement inchangée (choix : regroupement simple ; l'éclatement en sous-catégories reste TODO-38).
+  - **Suite** : certains regroupements ont été redéfaits à la demande — Linux, Docker et GitHub Actions/Jenkins sont remis en compétences distinctes, plus une compétence « stratégie de test » → voir TODO-44.
+- [x] **2026-10-02 — Centres d'intérêt & thèmes mis à jour** (TODO-37) — *(branche `feat/content-cv-update`, à committer)*
+  - `skillsData.tsx` → *Sport* : « Workout » supprimé, « Calisthenics »/« Callisthénie » en EN **et** FR, ajout d'« Athletics »/« Athlétisme ».
+  - `skillsData.tsx` → *Curiosity* : « AI/ML/Edge AI » → « HRL / MARL / Embodied AI », « Physics » → « Sciences », ajout d'« Environment »/« Environnement » et « Aerospace & Space »/« Aérospatial & Espace ».
+  - `generalData.tsx` : intérêts enrichis (espace, environnement) et « AI, MLOps, Edge AI » remplacés par HRL/MARL & IA incarnée, espace & aérospatial, environnement, sciences physiques.
+  - CV LaTeX : rubrique Divers/Interests mise en cohérence (Athlétisme/Athletics, Espace & aérospatial, Environnement, HRL/MARL) et doublon « Car » corrigé.
+  - **Depuis** : « Environment »/« Environnement » et « Woodworking »/« Travail du bois » ont finalement été retirés partout → voir TODO-41.
+- [x] **2026-10-02 — CV LaTeX : compilation et contenu corrigés** (ex-TODO-10) — *(branche `feat/content-cv-update`, à committer)*
+  - **Bugs bloquants corrigés** : `blue!40!black` / `blue!50!black` étaient utilisés **sans `xcolor`** (compilation impossible) → `\usepackage{xcolor}` ajouté ; `Backend & Security Testing` (EN) contenait un `&` non échappé → `\&`.
+  - Contenu : rubrique intérêts/divers alignée avec le site (voir TODO-37).
+  - **Vérifié** : `pdflatex` passe sans erreur sur les deux `.tex`, **1 page** chacun, 0 Overfull.
+  - **PDF servis non régénérés** : ils sont produits par Canva, pas par ces sources → suivi dans TODO-39.
+- [x] **2026-10-02 — Accueil : tuile « me » remplacée par un résumé simple** (TODO-40) — *(branche `feat/content-cv-update`, à committer)*
+  - `public/data/generalData.tsx` : le tableau `description` (interests / also / creativity) est supprimé, remplacé par `cvTitle` et `nationality` ; `me` ne garde que l'âge.
+  - `app/components/sections/GeneralSection.tsx` : une info par ligne — nom, âge, titre du CV, nationalité. Le reste (3D, embarqué, IA…) est déjà couvert par les compétences plus bas.
+- [x] **2026-10-02 — « Environnement » et « travail du bois » retirés partout** (TODO-41) — *(branche `feat/content-cv-update`, à committer)*
+  - `skillsData.tsx` : sous-liste *Curiosity* → item « Environment/Environnement » supprimé ; sous-liste *Creativity* → « Woodworking/Travail du bois » supprimé.
+  - `generalData.tsx` : les mentions d'environnement et de bois disparaissent avec l'ancien bloc `description`.
+  - CV LaTeX EN/FR : « Environment »/« Environnement » retirés de la rubrique intérêts/divers.
+- [x] **2026-10-02 — Timeline des expériences réalignée** (TODO-42) — *(branche `feat/content-cv-update`, à committer)*
+  - `app/components/sections/CareerSection.tsx` : la barre n'est plus un pourcentage de la tuile posé en absolu (d'où le décalage), mais un **segment dessiné dans chaque ligne** entre le centre d'un rond et le centre du suivant.
+  - Desktop : colonne de ronds + connecteur `top-[10px] -bottom-[10px]` centré sous les ronds ; mobile : connecteur horizontal `left-1/2 -right-1/2` entre centres.
+  - La partie remplie s'arrête donc exactement sur le rond actif ; version mobile et desktop harmonisées.
+- [x] ~~**2026-10-02 — Compensation des clics décalés par la courbure CRT** (TODO-43)~~ — **ANNULÉ, code retiré (2026-10-02)** — *(branche `feat/content-cv-update`, à committer)*
+  - Avait été implémenté (`app/utils/barrelPointer.ts` + installation dans `ScreenCurve`) et **fonctionnait** : formule validée en CDP (~3 px d'erreur contre ~21 px avec le signe inverse) ; clic émis en `(24, 24)` redirigé vers la cible réellement dessinée en `(3, 4)`.
+  - **Retiré à la demande** : on garde le comportement brut du warp (clics et survols décalés près des bords) plutôt que de risquer de casser autre chose.
+  - `app/utils/barrelPointer.ts` supprimé et `app/components/ui/ScreenCurve.tsx` remis à l'identique (`git diff` vide sur ce fichier).
+  - **État final : aucune compensation, ni clics ni survols.**
+- [x] **2026-10-02 — Compétences : Linux, Docker, GitHub Actions/Jenkins + stratégie de test** (TODO-44) — *(branche `feat/content-cv-update`, à committer)*
+  - `skillsData.tsx` : Git, Linux, Docker et GitHub Actions/Jenkins redeviennent des compétences distinctes (au lieu des groupes Git/GHA et Docker/Linux).
+  - Nouvelle compétence dédiée : « Test strategy — E2E, hardware & security » / « Stratégie de test — E2E, hardware & sécurité ».
+  - `Python / pytest` reste ; `Tech / C++ embarqué` conservé.
+  - Vérifié à l'écran : les 11 compétences tiennent dans la tuile active sans débordement.
+- [x] **2026-10-02 — Projets : catégorie unique, projet d'anonymisation, points de pagination** (TODO-45, clôt TODO-08) — *(branche `feat/content-cv-update`, à committer)*
+  - `projectsData.tsx` : catégories `dev` + `craft` fusionnées en une seule `dev` ; projet STM32 « détecteur de niveau d'eau » supprimé.
+  - Nouveau projet en cours ajouté depuis le README : **« LLM anonymization gateway » / « Sas d'anonymisation pour LLM »** (Python, FastAPI, pytest, Presidio, spaCy, GLiNER, PyMuPDF, RapidOCR, harnais P/R/F1).
+  - `ProjectsSection.tsx` : sélecteur de catégories retiré (une seule catégorie) et **points de pagination cliquables** ajoutés — point actif plus large en largeur uniquement, en blanc avec le halo `shadow-[0_0_10px_rgba(255,255,255,0.8)]` utilisé ailleurs ; points inactifs `bg-white/60`, soit la couleur des paragraphes.
+  - Vérifié à l'écran : 4 points, le premier allongé et éclairé, les autres discrets.
+- [x] **2026-10-02 — Contact : lueur des logos + popup de choix du CV** (TODO-46) — *(branche `feat/content-cv-update`, à committer)*
+  - `ContactSection.tsx` : les 3 logos (LinkedIn, GitHub, CV) reçoivent `group-hover:drop-shadow-[0_0_15px_rgba(252,255,210,0.9)]` — exactement le glow de `text-glow` appliqué à l'image de la tuile survolée.
+  - La tuile CV n'ouvre plus directement le PDF : elle ouvre `CvPickerModal`, rendu **en portail sur `document.body`** (le filtre CRT est un containing block pour `position: fixed`, la fenêtre était sinon déplacée et déformée).
+  - La popup propose **langue** (EN/FR) × **version** (Design / ATS), puis ouvre le PDF ; fermeture par la croix, le fond ou `Échap`.
+  - **Vérifié dans Brave headless** : le `filter` de l'image passe de `none` à `drop-shadow(rgba(252,255,210,0.83) 0 0 13,8px)` au survol ; popup centrée (448×450) et hors du warp.
+- [x] **2026-10-02 — CV : 4 versions servies (Design + ATS)** (ex-TODO-39) — *(branche `feat/content-cv-update`, à committer)*
+  - Les `.tex` sont désormais **compilés en PDF** : `public/contact/{en,fr}-CV-CHIFFOT_Calvin-ats.pdf` (1 page, 0 Overfull), en plus des PDF Canva existants (`…_Calvin.pdf`).
+  - La popup de la tuile CV (TODO-46) sert donc **langue × version** : le recruteur ne tombe plus sur la mauvaise langue, et dispose d'une version « ATS / simple » à côté de la version « Design ».
+  - Si le contenu des `.tex` change, il faut relancer la compilation pour régénérer les `-ats.pdf`.
+- [x] **2026-10-02 — Projets : tuile pleine hauteur, pagination dans la tuile, auto-avance** (TODO-47) — *(branche `feat/content-cv-update`, à committer)*
+  - La tuile reprend **toute la hauteur de la grille** (comme Skills/Career) : plus de rangée de pagination hors tuile, et le flou de section disparaît bien quand la section est centrée.
+  - Les points sont maintenant **dans la tuile**, en bas ; le point actif est une piste allongée qui **se remplit en 10 s** (animation CSS `auto-progress-x`) pour annoncer le projet suivant.
+  - Auto-avance déclenchée seulement quand la section est au centre (`ScrollContext`) via `useAutoAdvance` ; les flèches et le clic sur un point remettent le compte à rebours à zéro.
+  - **Vérifié dans Brave headless** : section centrée → `filter: none` (plus de flou) ; titre passé de « Portfolio #1 » à « The Bad Review » après 11 s.
+- [x] **2026-10-02 — Carrière : auto-avance, barre progressive, points passés atténués** (TODO-48) — *(branche `feat/content-cv-update`, à committer)*
+  - Section centrée : l'expérience active avance **toutes les 10 s** (`useAutoAdvance`) et le segment de barre menant au rond suivant **se remplit progressivement** sur la même durée (vertical `auto-progress-y`, horizontal `auto-progress-x`).
+  - Les **points déjà passés** passent de blanc plein à `bg-white/35 border-white/35` (barre passée à `bg-white/40`) : seul le point actif reste éclatant.
+  - **Vérifié dans Brave headless** : à t=4 s la barre est remplie à ~40 % entre les deux premiers ronds ; à t=11 s l'entrée active est passée de « DUT in CS » à « DevOps intern dev ».
+- [x] **2026-10-02 — Textes carrière réécrits en bullets concis** (TODO-49) — *(branche `feat/content-cv-update`, à committer)*
+  - Les 7 descriptions (`careerData.tsx`) passent de longs paragraphes à 2–4 puces courtes et directes, EN et FR.
+  - Rendu en `whitespace-pre-line` dans la tuile Détails : les `\n` deviennent de vraies lignes.
+- [x] **2026-10-02 — Accueil enrichi** (TODO-50, complète TODO-40) — *(branche `feat/content-cv-update`, à committer)*
+  - Ligne 2 : « Français — actuellement en Allemagne » / « French — currently in Germany » (`nationality` + `location`).
+  - Puis âge, titre du CV, « Ouvert aux opportunités à l'international » et **email cliquable** (`mailto:`, glow au survol).
+- [x] **2026-10-02 — Écran de chargement (barre de surbrillance)** (TODO-51) — *(branche `feat/content-cv-update`, à committer)*
+  - `app/components/ui/Preloader.tsx` : ni texte ni overlay opaque — une **barre** reprise du style des points allongés des projets (piste `bg-white/25`, remplissage blanc avec `shadow-[0_0_10px_rgba(255,255,255,0.8)]`).
+  - Il force le chargement (`loading = "eager"` + `decode()`) de **toutes** les `<img>` du DOM, attend `document.fonts.ready`, garde un minimum d'affichage (700 ms) et un plafond (8 s).
+  - Le contenu est masqué pendant l'attente par `ContentReveal` (`app/utils/LoadingContext.tsx`) puis **apparaît en fondu** ; le **fond reste visible** dès le départ.
+  - Monté **dans `ScreenCurve`/`CRTFilter`** (`app/layout.tsx`) : courbure et grille de pixels actives dès la première frame.
+  - Limite connue : les images CSS (il n'y en a pas ici) et celles montées après coup ne sont pas couvertes.
+  - **Vérifié** : à 220 ms la barre est dans le warp + le CRT, le fond est visible, le contenu en `opacity: 0` ; à 2,8 s contenu `opacity: 1` et barre disparue.
+- [x] **2026-10-02 — Sélection manuelle : l'auto-avance s'arrête** (TODO-52) — *(branche `feat/content-cv-update`, à committer)*
+  - Carrière et projets : cliquer un rond / une flèche / une entrée passe `autoPaused` à `true` → plus de minuteur ni de remplissage, le temps de lire.
+  - Le verrou se réarme automatiquement quand la section n'est plus au centre : l'auto-avance revient en re-rentrant dans la section.
+  - **Vérifié** : après un choix manuel, l'index est identique 11 s plus tard (carrière 3→3, projets 1→1).
+- [x] **2026-10-02 — Bug : les textes traduits restaient figés après un changement de langue** (TODO-53) — *(branche `feat/content-cv-update`, à committer)*
+  - Cause : `AnimatedWrapper` réécrivait `el.textContent`, ce qui **détachait les nœuds texte de React** ; React continuait ensuite à mettre à jour des nœuds absents du document → la ligne gardait l'ancienne langue (le bug se voyait surtout sur « Français — actuellement en Allemagne »).
+  - Correctif : l'animation écrit dans le **nœud texte existant** (`nodeValue`), ne touche plus aux éléments multi-nœuds, ignore ses propres frames (`WeakMap lastWritten`) et redémarre proprement si React change le texte en cours d'animation.
+  - **Vérifié dans Brave headless** : EN → FR → EN affiche bien les deux langues successivement.
+- [x] **2026-10-02 — Accueil : épaisseur de police de l'email alignée** (TODO-54) — *(branche `feat/content-cv-update`, à committer)*
+  - Le lien `mailto:` n'héritait pas du `font-semibold` global (appliqué à `p, li, span`, mais pas à `a`) : ajout de `text-sm md:text-base xl:text-lg font-semibold` pour matcher exactement le reste de la tuile.
+- [x] **2026-10-02 — CV LaTeX refaits au propre** (TODO-55) — *(branche `feat/content-cv-update`, à committer)*
+  - Une **macro d'entrée unique** (`\cventry{Titre}{Dates}{Organisme, Lieu}`) est maintenant partagée par les expériences **et** les formations : même hauteur de ligne, même espacement, même style partout.
+  - `\parindent` remis à `0` : c'était lui qui décalait les **titres à droite** alors que les lieux partaient de la marge. Désormais le **titre est l'ancre à la marge** et la ligne d'organisme est **indentée de 1,2 em** (alignée sur le texte des puces).
+  - Organismes en **italique dans les deux sections** (les formations ne l'étaient pas) et lieux complétés avec le pays.
+  - Puce réduite (`\scriptsize\textbullet`) : plus de gros point, et un seul style de liste `cvlist` pour tout le document.
+  - **Vérifié** : `pdflatex` sans erreur, **1 page** chacun, 0 Overfull ; les PDF `-ats.pdf` (EN + FR) ont été régénérés.
+  - Dernier passage : **plus de puces** pour *Technical Skills* et *Certificates* (lignes simples à label gras) et **plus de gras dans les puces** de l'expérience T&S, aligné sur les autres expériences.
 
 ---
 
@@ -220,3 +319,23 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-02 | Parallax v3 : sens inversé, amplitude +45 % | *(non committé)* |
 | 2026-10-02 | CRT = grille de pixels statique (flicker + text-shadow retirés), tilt extrait dans `ScreenTilt` | *(non committé)* |
 | 2026-10-02 | Tilt retiré du montage, parallax re-remis dans le sens d'origine | *(non committé)* |
+| 2026-10-02 | Contact : email en surbrillance au survol de la tuile (TODO-34) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Expériences, compétences et intérêts alignés sur le CV LaTeX (TODO-35 → 37) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | CV LaTeX : `xcolor` manquant + `&` non échappé corrigés, compile 1 page (ex-TODO-10) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | TODO-06 recadré « refaire la partie Projets » ; TODO-38/39 ajoutés | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Surbrillance email fiabilisée via `@utility text-glow` (TODO-34) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Accueil simplifié (TODO-40) + environnement/bois retirés (TODO-41) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Timeline des expériences réalignée (TODO-42) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Compensation des clics de la courbure CRT (TODO-43) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Compétences Linux/Docker/GitHub Actions-Jenkins + stratégie de test (TODO-44) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Projets : catégorie unique, projet d'anonymisation, points de pagination (TODO-45, clôt TODO-08) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Contact : lueur des logos + popup CV langue × version (TODO-46) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | CV : PDF « ATS » générés depuis les `.tex`, 4 versions servies (ex-TODO-39) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Projets : tuile pleine hauteur, pagination interne, auto-avance 10 s (TODO-47) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Carrière : auto-avance 10 s, barre progressive, points passés atténués (TODO-48) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Textes carrière en bullets concis (TODO-49) + accueil enrichi (TODO-50) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Compensation des clics CRT **retirée** à la demande (TODO-43 annulé) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Écran de chargement en barre de surbrillance, fond visible dès le départ (TODO-51) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Sélection manuelle = pause de l'auto-avance carrière/projets (TODO-52) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | Fix : textes figés après changement de langue (TODO-53) + email accueil (TODO-54) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-02 | CV LaTeX refaits au propre : entrée unique, alignements, puces fines (TODO-55) | *(branche `feat/content-cv-update`, à committer)* |

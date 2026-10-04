@@ -4,13 +4,36 @@ export const skillsData = [
 		name: { en: "Technical skills", fr: "Skills techniques" },
 		skills: [
 			{
-				name: { en: "JavaScript", fr: "JavaScript" },
+				name: { en: "JavaScript / TypeScript", fr: "JavaScript / TypeScript" },
 				icon: "/skills/JS_icon.png",
 				description: ""
 			},
 			{
-				name: { en: "React", fr: "React" },
+				name: { en: "React / Next.js", fr: "React / Next.js" },
 				icon: "/skills/React_icon.png",
+				description: ""
+			},
+			{
+				name: { en: "Node.js / Express", fr: "Node.js / Express" },
+				icon: "/skills/Node_icon.png",
+				description: ""
+			},
+			{
+				name: { en: "Python / pytest", fr: "Python / pytest" },
+				icon: "/skills/More_icon.png",
+				description: ""
+			},
+			{
+				name: {
+					en: "Test strategy — E2E, hardware & security",
+					fr: "Stratégie de test — E2E, hardware & sécurité"
+				},
+				icon: "/skills/Problem_icon.png",
+				description: ""
+			},
+			{
+				name: { en: "SQL (MySQL, PostgreSQL)", fr: "SQL (MySQL, PostgreSQL)" },
+				icon: "/skills/SQL_icon.png",
 				description: ""
 			},
 			{
@@ -19,18 +42,8 @@ export const skillsData = [
 				description: ""
 			},
 			{
-				name: { en: "TypeScript", fr: "TypeScript" },
-				icon: "/skills/TS_icon.png",
-				description: ""
-			},
-			{
-				name: { en: "Node.js", fr: "Node.js" },
-				icon: "/skills/Node_icon.png",
-				description: ""
-			},
-			{
-				name: { en: "Cloud", fr: "Cloud" },
-				icon: "/skills/Cloud_icon.png",
+				name: { en: "Linux", fr: "Linux" },
+				icon: "/skills/Linux_icon.png",
 				description: ""
 			},
 			{
@@ -39,30 +52,12 @@ export const skillsData = [
 				description: ""
 			},
 			{
-				name: { en: "Angular", fr: "Angular" },
-				icon: "/skills/Angular_icon.png",
-				description: ""
-			},
-			{
-				name: { en: "Github Actions", fr: "Github Actions" },
+				name: { en: "GitHub Actions / Jenkins", fr: "GitHub Actions / Jenkins" },
 				icon: "/skills/GithubActions_icon.png",
 				description: ""
 			},
 			{
-				name: { en: "SQL", fr: "SQL" },
-				icon: "/skills/SQL_icon.png",
-				description: ""
-			},
-			{
-				name: { en: "Linux", fr: "Linux" },
-				icon: "/skills/Linux_icon.png",
-				description: ""
-			},
-			{
-				name: {
-					en: "Python, Java and C bases",
-					fr: "Bases en Python, Java, C"
-				},
+				name: { en: "C / C++ (embedded)", fr: "C / C++ (embarqué)" },
 				icon: "/skills/More_icon.png",
 				description: ""
 			}
@@ -114,10 +109,14 @@ export const skillsData = [
 				subList: [
 					{
 						name: {
-							en: "Workout/Calisthenics",
-							fr: "Workout"
+							en: "Calisthenics",
+							fr: "Callisthénie"
 						},
-						icon: "🏋️"
+						icon: "💪"
+					},
+					{
+						name: { en: "Athletics", fr: "Athlétisme" },
+						icon: "🏃"
 					},
 					{
 						name: { en: "Motorcycle", fr: "Moto" },
@@ -131,7 +130,6 @@ export const skillsData = [
 				icon: "/skills/Creative_icon.png",
 				subList: [
 					{ name: { en: "3D Modelling", fr: "Modélisation 3D" }, icon: "📐" },
-					{ name: { en: "Woodworking", fr: "Travail du bois" }, icon: "🪵" },
 					{ name: { en: "Embedded/IoT", fr: "Embarqué/IoT" }, icon: "🎛️" },
 					{ name: { en: "Robotics", fr: "Robotique" }, icon: "🦾" },
 					{ name: { en: "Guitar", fr: "Guitare" }, icon: "🎸" }
@@ -143,13 +141,17 @@ export const skillsData = [
 				subList: [
 					{ name: { en: "Hardware", fr: "Hardware" }, icon: "📟" },
 					{
-						name: { en: "AI/ML/Edge AI", fr: "IA/ML/Edge AI" },
+						name: { en: "HRL / MARL / Embodied AI", fr: "HRL / MARL / IA incarnée" },
 						icon: "🤖"
 					},
 					{ name: { en: "Mechanics", fr: "Mécanique" }, icon: "🔧" },
 					{
-						name: { en: "Physics", fr: "Physique" },
+						name: { en: "Sciences", fr: "Sciences" },
 						icon: "🔬"
+					},
+					{
+						name: { en: "Aerospace & Space", fr: "Aérospatial & Espace" },
+						icon: "🚀"
 					}
 				]
 			}

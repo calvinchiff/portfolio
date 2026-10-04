@@ -4,6 +4,40 @@
 	--font-exo: var(--font-exo);
 }
 
+/* Registered as a real utility so every Tailwind variant works on it
+   (`text-glow`, `hover:text-glow`, `group-hover:text-glow`, …). */
+@utility text-glow {
+	text-shadow: 0px 0px 15px rgba(252, 255, 210, 0.9);
+}
+
+/* Countdown fills for the auto-advancing Career and Projects sections.
+   Must stay in sync with AUTO_ADVANCE_MS in those components. */
+.auto-progress-x {
+	animation: auto-progress-x var(--auto-duration, 10s) linear forwards;
+}
+
+.auto-progress-y {
+	animation: auto-progress-y var(--auto-duration, 10s) linear forwards;
+}
+
+@keyframes auto-progress-x {
+	from {
+		width: 0%;
+	}
+	to {
+		width: 100%;
+	}
+}
+
+@keyframes auto-progress-y {
+	from {
+		height: 0%;
+	}
+	to {
+		height: 100%;
+	}
+}
+
 :root {
 	--background: #0b0b0c;
 	--foreground: #ededed;
@@ -93,11 +127,6 @@ body {
 
 	.mask-bottom-left {
 		--mask-direction: to bottom left;
-	}
-
-	.text-glow,
-	.hover\:text-glow:hover {
-		text-shadow: 0px 0px 15px rgba(252, 255, 210, 0.9);
 	}
 
 	.scrollbar-none::-webkit-scrollbar {

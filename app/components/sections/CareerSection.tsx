@@ -1,16 +1,59 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Tile from "@/app/components/ui/Tile";
 import Section from "@/app/components/ui/Section";
 import { careerData } from "@/public/data/careerData";
 import { useLanguage } from "@/app/utils/LanguageContext";
+import { useScrollContext } from "@/app/utils/ScrollContext";
+import { useAutoAdvance } from "@/app/utils/useAutoAdvance";
+
+/** Must stay in sync with the `auto-progress-*` animations in globals.css. */
+const AUTO_ADVANCE_MS = 10000;
 
 export default function CareerSection() {
 	const { language } = useLanguage();
+	const { activeSection } = useScrollContext();
+	const isCentered = activeSection === "career";
 	type CareerEntry = (typeof careerData.entries)[0]; // Infer type from the first entry
 	const [active, setActive] = useState(careerData.entries[0]);
+	// Once the visitor picks an entry by hand, stop walking: they want to read.
+	const [autoPaused, setAutoPaused] = useState(false);
 	const activeIndex = careerData.entries.findIndex(
 		(entry) => entry.id === active.id
 	);
+	const lastIndex = careerData.entries.length - 1;
+
+	useEffect(() => {
+		if (!isCentered) setAutoPaused(false);
+	}, [isCentered]);
+
+	const selectEntry = (entry: CareerEntry) => {
+		setActive(entry);
+		setAutoPaused(true);
+	};
+
+	// When the section sits at the centre of the screen, walk the timeline.
+	useAutoAdvance({
+		active: isCentered && !autoPaused,
+		durationMs: AUTO_ADVANCE_MS,
+		resetKey: active.id,
+		onAdvance: () =>
+			setActive(careerData.entries[(activeIndex + 1) % careerData.entries.length])
+	});
+
+	const dotClass = (index: number) =>
+		index === activeIndex
+			? "bg-white border-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+			: index < activeIndex
+			? "bg-white/35 border-white/35"
+			: "bg-black/30 border-white/50";
+
+	const railTrackClass = (index: number) =>
+		index < activeIndex ? "bg-white/40" : "bg-white/20";
+
+	const yearLabel = (entry: CareerEntry) =>
+		`${entry.from.split("-")[2]} - ${entry.to.split("-")[2]}`;
 
 	return (
 		<Section
@@ -25,41 +68,36 @@ export default function CareerSection() {
 					customClassName=""
 				>
 					{/* Version mobile - Timeline horizontale */}
-					<div className="md:hidden h-10 relative w-full">
-						<div className="absolute w-[90%] left-[5%] right-[5%] top-4 h-1 bg-white/20 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
-						<div
-							className="absolute left-[5%] top-4 h-1 bg-white rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-							style={{
-								width: `${
-									(activeIndex / (careerData.entries.length - 1)) * 90
-								}%`
-							}}
-						/>
-
-						<ul className="absolute w-[90%] left-[5%] right-[5%] flex justify-between h-full">
+					<div className="md:hidden relative w-full h-12 mt-1">
+						<ul className="flex flex-row w-full h-full">
 							{careerData.entries.map((entry, index) => (
-								<li
-									key={entry.id}
-									className="relative flex flex-col items-center cursor-pointer"
-									onClick={() => setActive(entry)}
-								>
+								<li key={entry.id} className="relative flex-1">
+									{index < careerData.entries.length - 1 && (
+										<div
+											className={`absolute top-[4px] left-1/2 -right-1/2 h-1 rounded-full overflow-hidden ${railTrackClass(
+												index
+											)}`}
+										>
+											{index === activeIndex && isCentered && !autoPaused && (
+												<div className="h-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] auto-progress-x" />
+											)}
+										</div>
+									)}
 									<div
-										className={`w-3 h-3 rounded-full border-2 transition-all duration-300 absolute top-3 ${
-											index === activeIndex
-												? "bg-white border-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-												: index < activeIndex
-												? "bg-white border-white"
-												: "bg-black/30 border-white/50"
-										}`}
-									></div>
+										onClick={() => selectEntry(entry)}
+										className={`absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border-2 cursor-pointer transition-all duration-300 ${dotClass(
+											index
+										)}`}
+									/>
 									<p
-										className={`text-[10px] absolute whitespace-nowrap ${
-											index % 2 === 0 ? "top-6" : "-top-1"
-										} left-1/2 -translate-x-1/2 text-center ${
+										onClick={() => selectEntry(entry)}
+										className={`absolute left-1/2 -translate-x-1/2 text-[10px] whitespace-nowrap text-center cursor-pointer ${
+											index % 2 === 0 ? "top-4" : "-top-3"
+										} ${
 											active === entry ? "opacity-90 text-glow" : "opacity-40"
 										}`}
 									>
-										{entry.from.split("-")[2]} - {entry.to.split("-")[2]}
+										{yearLabel(entry)}
 									</p>
 								</li>
 							))}
@@ -67,41 +105,35 @@ export default function CareerSection() {
 					</div>
 
 					{/* Version desktop - Timeline verticale */}
-					<div className="hidden md:block h-full relative pl-8 mt-4 opacity-90 p-4">
-						<div className="absolute left-2.5 top-2 bottom-8 w-1 bg-white/20 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
-						<div
-							className="absolute left-2.5 top-2 w-1 bg-white rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-							style={{
-								height: `${
-									(activeIndex / (careerData.entries.length - 1)) * 90 + 3
-								}%`
-							}}
-						/>
-
-						<ul className="flex flex-col h-full justify-between">
+					<div className="hidden md:block h-full relative opacity-90 py-4">
+						<ul className="flex flex-col h-full">
 							{careerData.entries.map((entry, index) => (
-								<li key={entry.id} className="relative">
+								<li key={entry.id} className="relative flex-1 min-h-0">
+									{index < lastIndex && (
+										<div
+											className={`absolute left-2 top-[10px] -bottom-[10px] w-1 rounded-full overflow-hidden ${railTrackClass(
+												index
+											)}`}
+										>
+											{index === activeIndex && isCentered && !autoPaused && (
+												<div className="w-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] auto-progress-y" />
+											)}
+										</div>
+									)}
 									<div
-										className={`absolute -left-7.5 top-1 w-5 h-5 rounded-full border-2 transition-all duration-300 ${
-											index === activeIndex
-												? "bg-white border-white shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-												: index < activeIndex
-												? "bg-white border-white"
-												: "bg-black/30 border-white/50"
-										}`}
-									></div>
-
+										className={`absolute left-0 top-0 w-5 h-5 rounded-full border-2 transition-all duration-300 ${dotClass(
+											index
+										)}`}
+									/>
 									<div
-										className={`cursor-pointer transition-all duration-150 ${
+										onClick={() => selectEntry(entry)}
+										className={`ml-8 cursor-pointer transition-all duration-150 ${
 											active === entry
 												? "opacity-90 text-glow"
 												: "opacity-40 hover:opacity-60"
 										}`}
-										onClick={() => setActive(entry)}
 									>
-										<h3 className="font-bold">
-											{entry.from.split("-")[2]} - {entry.to.split("-")[2]}
-										</h3>
+										<h3 className="font-bold">{yearLabel(entry)}</h3>
 										<p className="text-sm md:text-base">
 											{entry.title[language]}
 										</p>
@@ -117,7 +149,7 @@ export default function CareerSection() {
 					title={careerData.tiles.details.name[language]}
 					customClassName=""
 				>
-					<div className="flex flex-col md:gap-2 md:mt-2 h-full justify-between py-2">
+					<div className="flex flex-col md:gap-1 md:mt-2 h-full justify-between py-2">
 						{Object.entries(careerData.tiles.details.contentTitles).map(
 							([key, label]) => {
 								const value = active[key as keyof CareerEntry]; // Use the inferred type
@@ -130,7 +162,7 @@ export default function CareerSection() {
 									<div key={key} className="flex gap-2">
 										<span className="font-semibold text-xs md:text-base xl:text-lg transition-all duration-150">
 											{label[language]} :
-											<span className="opacity-60 ml-2 text-xs md:text-base xl:text-lg transition-all duration-150">
+											<span className="opacity-60 ml-2 text-xs md:text-base xl:text-lg transition-all duration-150 whitespace-pre-line">
 												{typeof value === "object" ? value[language] : value}
 											</span>
 										</span>

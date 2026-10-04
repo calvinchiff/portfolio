@@ -27,8 +27,8 @@ export const careerData = {
 			},
 			company: "",
 			description: {
-				en: "That's where I learned the basics in CS and completed my first projects.",
-				fr: "C'est là que j'ai pu apprendre les bases en informatique et réaliser mes premiers projets."
+				en: "• CS fundamentals: algorithms, databases, networks\n• First team projects (Java, SQL, HTML/CSS)",
+				fr: "• Bases de l'informatique : algorithmes, bases de données, réseaux\n• Premiers projets en équipe (Java, SQL, HTML/CSS)"
 			},
 			school: "IUT Vannes",
 			location: "Vannes, France",
@@ -45,8 +45,8 @@ export const careerData = {
 			},
 			company: "Arkea",
 			description: {
-				en: "My first steps into the professional world: I participated in the integration and deployment of internal tools, automating processes with Jenkins, Docker, DBMaintain, and Liquibase.",
-				fr: "Mes premiers pas dans le monde professionnel, j’ai participé à l’intégration et au déploiement d’outils internes en automatisant les process avec Jenkins, Docker, DBMaintain et Liquibase."
+				en: "• Automated integration and deployment of internal tools\n• Pipelines with Jenkins, Docker, DBMaintain and Liquibase",
+				fr: "• Automatisation de l'intégration et du déploiement d'outils internes\n• Pipelines avec Jenkins, Docker, DBMaintain et Liquibase"
 			},
 			school: "",
 			location: "Nantes, France",
@@ -63,8 +63,8 @@ export const careerData = {
 			},
 			company: "",
 			description: {
-				en: "During my DevOps Bachelor’s degree, I deepened my knowledge of software development, microservices, and API design. I also learned to set up CI/CD pipelines to automate deployments. Through various projects, I developed a professional mindset by considering real-world constraints, especially with Agile methodologies.",
-				fr: "Lors de mon Bachelor DevOps, j’ai approfondi le développement logiciel, les microservices et la conception d’API. J’ai également appris à mettre en place des pipelines CI/CD pour automatiser le déploiement. À travers divers projets, j’ai acquis une approche professionnelle en prenant en compte les contraintes réelles du métier, notamment avec les méthodes Agile."
+				en: "• Software development, microservices and API design\n• CI/CD pipelines to automate deployments\n• Agile way of working, real project constraints",
+				fr: "• Développement logiciel, microservices et conception d'API\n• Pipelines CI/CD pour automatiser les déploiements\n• Méthodes Agiles, contraintes réelles de projet"
 			},
 			school: "EPSI Nantes",
 			location: "Saint-Herblain, France",
@@ -82,8 +82,8 @@ export const careerData = {
 			title: { en: "Dev apprenticeship", fr: "Développeur alternant" },
 			company: "SCC",
 			description: {
-				en: "During my apprenticeship, I designed, developed, and deployed an automated data ingestion tool using Azure Data Factory and SQL to optimize data processing. I also worked on full-stack web applications with HTML/CSS, JavaScript, and Node.js. Lastly, I contributed to the integration and deployment of cloud-based projects using AWS, implementing CI/CD pipelines with GitHub Actions to ensure continuous delivery.",
-				fr: "Pendant mon alternance, j’ai conçu, développé et déployé un outil d’ingestion de données automatisé avec Azure Data Factory et SQL pour optimiser le traitement des données. J’ai aussi travaillé sur des applications web full-stack en utilisant HTML/CSS, JavaScript et Node.js. Enfin, j’ai participé à l’intégration et au déploiement de projets cloud avec AWS, en mettant en place des pipelines CI/CD via GitHub Actions pour garantir une livraison continue."
+				en: "• Automated data ingestion tool (Azure Data Factory, SQL)\n• Full-stack web apps (HTML/CSS, JavaScript, Node.js)\n• Cloud delivery and CI/CD on AWS with GitHub Actions",
+				fr: "• Outil d'ingestion de données automatisé (Azure Data Factory, SQL)\n• Applications web full-stack (HTML/CSS, JavaScript, Node.js)\n• Livraison cloud et CI/CD sur AWS avec GitHub Actions"
 			},
 			school: "",
 			location: "Saint-Herblain, France",
@@ -97,8 +97,8 @@ export const careerData = {
 			title: { en: "Master in CS : EISI", fr: "Master EISI" },
 			company: "",
 			description: {
-				en: "This program allowed me to deepen my expertise in IT and information systems. I learned to analyze a company’s IT needs, manage projects in an agile environment, and design data strategies aligned with business goals. I also worked on developing applications across different environments (mobile, embedded, ERP) and on integrating, securing, and maintaining cloud and virtualized solutions.",
-				fr: "Ce cursus m’a permis d’approfondir mon expertise en informatique et en systèmes d’information. J’y ai appris à analyser les besoins SI d’une entreprise, piloter des projets en environnement agile et concevoir des stratégies data alignées avec les enjeux business. J’ai également travaillé sur le développement d’applications dans divers environnements (mobiles, embarqués, ERP) et sur l’intégration, la sécurisation et la maintenance de solutions cloud et virtualisées."
+				en: "• IT needs analysis and agile project management\n• Data strategy aligned with business goals\n• Apps across mobile, embedded and ERP environments\n• Integration and security of cloud/virtualised solutions",
+				fr: "• Analyse des besoins SI et pilotage de projets Agile\n• Stratégie data alignée aux enjeux business\n• Applications mobiles, embarquées et ERP\n• Intégration et sécurisation de solutions cloud/virtualisées"
 			},
 			school: "EPSI Nantes",
 			location: "Nantes, France",
@@ -115,8 +115,8 @@ export const careerData = {
 			},
 			company: "LTTD Consulting",
 			description: {
-				en: "Designed and developed web applications in Angular, used as custom screens within the Infor M3 ERP, as part of a development team. Beyond development, I was actively involved in project management, directly handling client needs, tracking requests, and managing updates for deployed applications.",
-				fr: "Conception et développement d’applications web en Angular, utilisées comme écrans personnalisés intégrés à l’ERP Infor M3, au sein d’une équipe de développeurs. En plus du développement, j’ai participé à la gestion des projets en étant en contact direct avec les clients pour recueillir leurs besoins, suivre les demandes et assurer les mises à jour des applications déjà déployées."
+				en: "• Angular web apps used as custom screens inside Infor M3\n• Direct client contact: needs, requests, updates\n• Delivery inside a development team",
+				fr: "• Applications web Angular intégrées à l'ERP Infor M3\n• Contact client direct : besoins, demandes, mises à jour\n• Livraison au sein d'une équipe de développement"
 			},
 			school: "",
 			location: "Saint-Herblain, France",
@@ -127,18 +127,21 @@ export const careerData = {
 		},
 		{
 			id: "7",
-			title: { en: "Self Learning AI", fr: "IA en autodidacte" },
-			company: "",
-			description: {
-				en: "I’m working on personal projects in Next.js with TailwindCSS and exploring embedded systems with STM32. At the same time, I’m learning AI and MLOPS to apply it to robotics and/or the automotive industry.",
-				fr: "Je travaille sur des projets perso en Next.js avec TailwindCSS et j’explore l’embarqué avec des STM32. En parallèle, je me forme à l’IA et au MLOPS pour l’appliquer à la robotique et/ou l’automobile."
+			title: {
+				en: "Consultant Software Engineer - Security & Testing",
+				fr: "Consultant Ingénieur Logiciel - Sécurité & Test"
 			},
-			school: "Calvin's School",
-			location: "Nantes, France",
-			from: "25-01-2025",
-			to: "??-??-????",
+			company: "T&S",
+			description: {
+				en: "• End-to-end test framework in pytest (Bosch eBike Systems)\n• Embedded and hardware testing: robustness, protocols, firmware security\n• Security audits and automated integration tests on cloud APIs and backends",
+				fr: "• Framework de test end-to-end en pytest (Bosch eBike Systems)\n• Tests embarqué et hardware : robustesse, protocoles, sécurité firmware\n• Audits de sécurité et tests d'intégration automatisés des APIs cloud et backends"
+			},
+			school: "",
+			location: "Stuttgart, Germany",
+			from: "01-01-2026",
+			to: "31-12-2028",
 			techno:
-				"Next.js, React, TailwindCSS, C/C++, STM32, FreeTROS, Python, TensorFlow, PyTorch, scikit-learn, Docker, Kubernetes",
+				"Python, pytest, E2E automation, Security testing, Embedded & hardware, Backend & APIs, CI/CD",
 			success: { en: "", fr: "" }
 		}
 	]
