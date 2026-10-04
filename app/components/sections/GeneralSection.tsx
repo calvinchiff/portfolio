@@ -4,18 +4,12 @@ import Image from "next/image";
 import Tile from "@/app/components/ui/Tile";
 import Section from "@/app/components/ui/Section";
 import { generalData } from "@/public/data/generalData";
+import { contactData } from "@/public/data/contactData";
 import { useLanguage } from "@/app/utils/LanguageContext";
 import LinkImageTile from "@/app/components/ui/LinkImageTile";
 
 export default function GeneralSection() {
 	const { language } = useLanguage();
-
-	const listDescription = generalData.description.map((line) => (
-		<li key={line.id}>
-			{line.title[language]} :
-			<span className="opacity-60 ml-2">{line.text[language]}</span>
-		</li>
-	));
 
 	const birthDate = new Date("2001-03-30");
 	const today = new Date();
@@ -50,12 +44,26 @@ export default function GeneralSection() {
 								style={{ objectFit: "contain" }}
 							/>
 						</div>
-						<div className="flex flex-col md:basis-2/3 self-center gap-3">
-							<div className="self-center md:self-start flex md:flex-row gap-4">
-								<h2>{generalData.name}</h2>
-								<h2 className="opacity-60">{age + generalData.me[language]}</h2>
-							</div>
-							<ul className="flex flex-col gap-2">{listDescription}</ul>
+						<div className="flex flex-col md:basis-2/3 self-center items-center md:items-start gap-1 text-center md:text-left">
+							<h2 className="text-center md:text-left">{generalData.name}</h2>
+							{/* Single expression on purpose: `AnimatedWrapper` rewrites
+							    textContent, which detaches the original text nodes. With
+							    several text children React keeps updating stale nodes, so
+							    this line used to stay frozen in the previous language. */}
+							<p className="opacity-70">
+								{`${generalData.nationality[language]} — ${generalData.location[language]}`}
+							</p>
+							<p className="opacity-70">{age + generalData.me[language]}</p>
+							<p className="opacity-70">{generalData.cvTitle[language]}</p>
+							<p className="opacity-70">
+								{generalData.availability[language]}
+							</p>
+							<a
+								href={`mailto:${contactData.emailPart1}@${contactData.emailPart2}.${contactData.emailPart3}`}
+								className="text-sm md:text-base xl:text-lg font-semibold opacity-70 hover:opacity-100 hover:text-glow transition-all duration-150"
+							>
+								{`${contactData.emailPart1}@${contactData.emailPart2}.${contactData.emailPart3}`}
+							</a>
 						</div>
 					</div>
 				</Tile>
