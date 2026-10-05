@@ -2,42 +2,17 @@
 
 import Image from "next/image";
 import { navbarData } from "@/public/data/navbarData";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLanguage } from "@/app/utils/LanguageContext";
+import { useScrollContext } from "@/app/utils/ScrollContext";
 import BGTile from "@/app/components/ui/BGTile";
 import { handleScrollToId } from "@/app/utils/scroll";
 
 export default function Header() {
-	const [activeSection, setActiveSection] = useState<string | null>(null);
+	// Same source of truth as the section blur in `Section.tsx`, so the nav
+	// highlight and the un-blurred tile can never disagree.
+	const { activeSection } = useScrollContext();
 	const { language, changeLanguage } = useLanguage();
-
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						setActiveSection(entry.target.id);
-					}
-				});
-			},
-			{
-				root: null, // Use viewport as root
-				rootMargin: "-45% 0px -45% 0px",
-				threshold: [0.1, 0.5, 0.9]
-			}
-		);
-
-		const sections = document.querySelectorAll("section");
-		if (sections.length === 0) {
-			console.error("No <section> elements found on the page.");
-		}
-
-		sections.forEach((section) => observer.observe(section));
-
-		return () => {
-			sections.forEach((section) => observer.unobserve(section));
-		};
-	}, []);
 
 	const listNavbar = navbarData.map((x) => (
 		<button

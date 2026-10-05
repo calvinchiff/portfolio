@@ -22,37 +22,52 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [activeSection, setActiveSection] = useState<string>("");
 
 	useEffect(() => {
-		const observerOptions = {
-			root: null,
-			rootMargin: "-30% 0px -30% 0px", // Zone centrale de 40%
-			threshold: 0.5
-		};
+		// The page scrolls inside <main>, not the document, and on a phone the
+		// browser chrome makes `vh` and the visual viewport disagree — so an
+		// IntersectionObserver ratio never reliably crossed 0.5 there and the
+		// centred tile stayed blurred. Instead we simply pick the section whose
+		// centre is closest to the middle of the screen.
+		const scroller = document.querySelector("main");
+		let frame = 0;
 
-		const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-					setActiveSection(entry.target.id);
+		const update = () => {
+			frame = 0;
+			const sections = Array.from(
+				document.querySelectorAll<HTMLElement>("section[id]")
+			);
+			if (!sections.length) return;
+
+			const viewportCentre = window.innerHeight / 2;
+			let closestId = "";
+			let closestDistance = Number.POSITIVE_INFINITY;
+
+			for (const section of sections) {
+				const rect = section.getBoundingClientRect();
+				const distance = Math.abs(rect.top + rect.height / 2 - viewportCentre);
+				if (distance < closestDistance) {
+					closestDistance = distance;
+					closestId = section.id;
 				}
-			});
+			}
+
+			if (closestId) setActiveSection(closestId);
 		};
 
-		const observer = new IntersectionObserver(
-			handleIntersection,
-			observerOptions
-		);
-
-		// Observer toutes les sections avec un petit délai pour s'assurer qu'elles sont montées
-		const observeSections = () => {
-			const sections = document.querySelectorAll("section[id]");
-			sections.forEach((section) => observer.observe(section));
+		const requestUpdate = () => {
+			if (!frame) frame = window.requestAnimationFrame(update);
 		};
 
-		// Délai pour laisser le temps aux composants de se monter
-		const timeoutId = setTimeout(observeSections, 100);
+		const target: HTMLElement | Window = scroller ?? window;
+		target.addEventListener("scroll", requestUpdate, { passive: true });
+		window.addEventListener("resize", requestUpdate);
+		const timeoutId = window.setTimeout(requestUpdate, 100);
+		requestUpdate();
 
 		return () => {
-			clearTimeout(timeoutId);
-			observer.disconnect();
+			window.clearTimeout(timeoutId);
+			target.removeEventListener("scroll", requestUpdate);
+			window.removeEventListener("resize", requestUpdate);
+			if (frame) window.cancelAnimationFrame(frame);
 		};
 	}, []);
 
