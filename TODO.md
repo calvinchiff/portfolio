@@ -274,6 +274,18 @@ autres outils externes).
   - Correctif : détection de la **section la plus proche du centre de l'écran** (`getBoundingClientRect` + `innerHeight / 2`), throttlée en `requestAnimationFrame`, avec écoute du scroll sur `<main>` et du `resize`.
   - `Header.tsx` consomme désormais le **même `activeSection`** que le flou (`useScrollContext`) : le nav et la tuile nette ne peuvent plus diverger.
   - **Vérifié en Brave headless** : en **390×844**, chaque section centrée → `filter: none`, `opacity: 1`, nav synchronisé ; non-régression en **1280×900**.
+- [x] **2026-10-05 — Projet d'anonymisation : description plus courte et plus petite** (TODO-58) — *(branche `feat/content-cv-update`)*
+  - `public/data/projectsData.tsx` : description EN/FR réécrite en **phrases courtes** (un bloc unique → 8 phrases), en enlevant ce qui est déjà dans le champ *Techno*.
+  - `app/components/sections/ProjectsSection.tsx` : le champ **Description** passe un cran sous le reste (`text-xs md:text-sm xl:text-base`) → plus lisible et sans débordement de la tuile.
+  - **Vérifié en Brave headless** : desktop 1280×900 → 16 px, 145 px de haut ; mobile 390×844 → 12 px, 214 px ; la description tient dans la tuile dans les deux cas.
+- [x] **2026-10-05 — Projets triés du plus récent au plus vieux** (TODO-59) — *(branche `feat/content-cv-update`)*
+  - `public/data/projectsData.tsx` : ordre de la liste `dev` revu en **décroissant de date** → *LLM anonymization gateway* (10-2026), *The Bad Review* (04-2025), *Portfolio* (03-2025), *Mangatheque API* (03-2024).
+  - Les `id` (affichés en `#N` dans le titre) ont été **renumérotés 1→4** pour rester cohérents avec l'ordre affiché ; un commentaire rappelle de garder id et date synchronisés.
+  - Les points de pagination suivent l'ordre du tableau, donc le projet le plus récent est désormais le premier affiché.
+- [x] **2026-10-05 — Curiosity : « Hardware » retiré, le spatial en un mot** (TODO-60) — *(branche `feat/content-cv-update`)*
+  - `public/data/skillsData.tsx` (sous-liste *Curiosity*) : l'item **Hardware** est supprimé.
+  - « Aerospace & Space » / « Aérospatial & Espace » remplacé par un seul mot, **« Space » / « Espace »**, qui couvre tout ce qui touche au spatial.
+  - La sous-liste *Curiosity* passe donc à 4 items : HRL/MARL & IA incarnée, Mécanique, Sciences, Espace.
 
 ---
 
@@ -350,3 +362,6 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-02 | CV LaTeX refaits au propre : entrée unique, alignements, puces fines (TODO-55) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-04 | Grille CRT hors du warp + logo Python dédié (TODO-56) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-04 | Mobile : tuile centrée plus floue (détection par proximité du centre) (TODO-57) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-05 | Logo C/C++ dédié + description du projet d'anonymisation raccourcie et réduite (TODO-58) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-05 | Projets triés du plus récent au plus vieux + ids renumérotés (TODO-59) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-05 | Curiosity : « Hardware » retiré, « Space »/« Espace » en un mot (TODO-60) | *(branche `feat/content-cv-update`, à committer)* |

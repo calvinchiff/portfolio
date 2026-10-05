@@ -58,7 +58,7 @@ export const skillsData = [
 			},
 			{
 				name: { en: "C / C++ (embedded)", fr: "C / C++ (embarqué)" },
-				icon: "/skills/More_icon.png",
+				icon: "/skills/cpp.webp",
 				description: ""
 			}
 		]
@@ -139,7 +139,6 @@ export const skillsData = [
 				name: { en: "Curiosity", fr: "Curiosité" },
 				icon: "/skills/Explorer_icon.png",
 				subList: [
-					{ name: { en: "Hardware", fr: "Hardware" }, icon: "📟" },
 					{
 						name: { en: "HRL / MARL / Embodied AI", fr: "HRL / MARL / IA incarnée" },
 						icon: "🤖"
@@ -149,10 +148,7 @@ export const skillsData = [
 						name: { en: "Sciences", fr: "Sciences" },
 						icon: "🔬"
 					},
-					{
-						name: { en: "Aerospace & Space", fr: "Aérospatial & Espace" },
-						icon: "🚀"
-					}
+					{ name: { en: "Space", fr: "Espace" }, icon: "🚀" }
 				]
 			}
 		]
