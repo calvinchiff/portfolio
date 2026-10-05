@@ -20,7 +20,7 @@ export const skillsData = [
 			},
 			{
 				name: { en: "Python / pytest", fr: "Python / pytest" },
-				icon: "/skills/More_icon.png",
+				icon: "/skills/python.webp",
 				description: ""
 			},
 			{
