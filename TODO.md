@@ -269,6 +269,11 @@ autres outils externes).
   - `app/layout.tsx` : `CRTFilter` est passé **au-dessus** de `ScreenCurve` (au lieu d'être dedans). La grille de pixels reste donc **plate** pendant que le contenu est courbé : la distorsion ne s'applique plus au filtre CRT. Le `Preloader` reste dans les deux, donc les deux effets sont actifs dès la première frame.
   - `public/data/skillsData.tsx` : la compétence « Python / pytest » utilise le nouveau logo `public/skills/python.webp`.
   - **Vérifié en Brave headless** : `.crt-pixels` n'est plus descendant de `.screen-curve__warp` (`closest` = `null`, `filter: none`) alors que le contenu l'est toujours, et le logo Python est bien chargé.
+- [x] **2026-10-04 — Mobile : la tuile centrée restait floue** (TODO-57) — *(branche `feat/content-cv-update`)*
+  - Cause : `ScrollContext` utilisait un `IntersectionObserver` (`rootMargin: -30%`, `intersectionRatio > 0,5`). Sur mobile, le `vh` (grand viewport) et le viewport visuel divergent : le ratio plafonnait **sous 0,5**, donc aucune section n'était marquée active et tout restait flou.
+  - Correctif : détection de la **section la plus proche du centre de l'écran** (`getBoundingClientRect` + `innerHeight / 2`), throttlée en `requestAnimationFrame`, avec écoute du scroll sur `<main>` et du `resize`.
+  - `Header.tsx` consomme désormais le **même `activeSection`** que le flou (`useScrollContext`) : le nav et la tuile nette ne peuvent plus diverger.
+  - **Vérifié en Brave headless** : en **390×844**, chaque section centrée → `filter: none`, `opacity: 1`, nav synchronisé ; non-régression en **1280×900**.
 
 ---
 
@@ -344,3 +349,4 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-02 | Fix : textes figés après changement de langue (TODO-53) + email accueil (TODO-54) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-02 | CV LaTeX refaits au propre : entrée unique, alignements, puces fines (TODO-55) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-04 | Grille CRT hors du warp + logo Python dédié (TODO-56) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-04 | Mobile : tuile centrée plus floue (détection par proximité du centre) (TODO-57) | *(branche `feat/content-cv-update`, à committer)* |
