@@ -265,6 +265,10 @@ autres outils externes).
   - Puce réduite (`\scriptsize\textbullet`) : plus de gros point, et un seul style de liste `cvlist` pour tout le document.
   - **Vérifié** : `pdflatex` sans erreur, **1 page** chacun, 0 Overfull ; les PDF `-ats.pdf` (EN + FR) ont été régénérés.
   - Dernier passage : **plus de puces** pour *Technical Skills* et *Certificates* (lignes simples à label gras) et **plus de gras dans les puces** de l'expérience T&S, aligné sur les autres expériences.
+- [x] **2026-10-04 — Grille CRT sortie du warp + logo Python dédié** (TODO-56) — *(branche `feat/content-cv-update`)*
+  - `app/layout.tsx` : `CRTFilter` est passé **au-dessus** de `ScreenCurve` (au lieu d'être dedans). La grille de pixels reste donc **plate** pendant que le contenu est courbé : la distorsion ne s'applique plus au filtre CRT. Le `Preloader` reste dans les deux, donc les deux effets sont actifs dès la première frame.
+  - `public/data/skillsData.tsx` : la compétence « Python / pytest » utilise le nouveau logo `public/skills/python.webp`.
+  - **Vérifié en Brave headless** : `.crt-pixels` n'est plus descendant de `.screen-curve__warp` (`closest` = `null`, `filter: none`) alors que le contenu l'est toujours, et le logo Python est bien chargé.
 
 ---
 
@@ -339,3 +343,4 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-02 | Sélection manuelle = pause de l'auto-avance carrière/projets (TODO-52) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-02 | Fix : textes figés après changement de langue (TODO-53) + email accueil (TODO-54) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-02 | CV LaTeX refaits au propre : entrée unique, alignements, puces fines (TODO-55) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-04 | Grille CRT hors du warp + logo Python dédié (TODO-56) | *(branche `feat/content-cv-update`, à committer)* |
