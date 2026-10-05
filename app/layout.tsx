@@ -58,16 +58,19 @@ export default function RootLayout({
 		<html lang="en" className="scroll-smooth">
 			<body className={`${exo.variable} antialiased`}>
 				<LoadingProvider>
-					{/* Three independent screen effects, nested outermost first — remove
+					{/* Two independent screen effects, nested outermost first — remove
 					    either one on its own:
+					      CRTFilter   = flat pixel grid (scanlines + RGB subpixels)
 					      ScreenCurve = convex-glass curvature (barrel warp)
-					      CRTFilter   = static pixel grid (scanlines + RGB subpixels)
+					    CRTFilter stays OUTSIDE ScreenCurve on purpose: the pixel grid
+					    must not be warped with the content — the glass bends, the grid
+					    does not.
 					    `ScreenTilt.tsx` (perspective + rotateX) is kept on disk but not
-					    mounted — wrap it around CRTFilter to bring the tilt back.
-					    The preloader sits inside them so both effects are live from the
-					    first frame; only the content (not the background) waits. */}
-					<ScreenCurve>
-						<CRTFilter>
+					    mounted — wrap it around ScreenCurve to bring the tilt back.
+					    The preloader sits inside both so the two effects are live from
+					    the first frame; only the content (not the background) waits. */}
+					<CRTFilter>
+						<ScreenCurve>
 							<AnalyticsWrapper>
 								<ContentReveal>
 									<AnimatedWrapper>
@@ -77,8 +80,8 @@ export default function RootLayout({
 								<BGDepth />
 							</AnalyticsWrapper>
 							<Preloader />
-						</CRTFilter>
-					</ScreenCurve>
+						</ScreenCurve>
+					</CRTFilter>
 				</LoadingProvider>
 			</body>
 		</html>
