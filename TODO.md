@@ -286,6 +286,10 @@ autres outils externes).
   - `public/data/skillsData.tsx` (sous-liste *Curiosity*) : l'item **Hardware** est supprimé.
   - « Aerospace & Space » / « Aérospatial & Espace » remplacé par un seul mot, **« Space » / « Espace »**, qui couvre tout ce qui touche au spatial.
   - La sous-liste *Curiosity* passe donc à 4 items : HRL/MARL & IA incarnée, Mécanique, Sciences, Espace.
+- [x] **2026-10-05 — Textes un cran plus petits sur mobile** (TODO-61) — *(branche `feat/mobile-text-sizes`)*
+  - `app/globals.css` : sous 768 px, un cran de moins sur toute la base — `h1` `text-lg`→`text-base`, `h2` `text-base`→`text-sm`, `p/li/span` `text-sm`→`text-xs`. **Desktop inchangé.**
+  - Alignement des tailles explicites qui seraient restées plus grandes : nav du header (`text-base`→`text-sm`), email de l'accueil (`text-sm`→`text-xs`), tuile contact (`text-base`→`text-sm`).
+  - **Vérifié en Brave headless** : mobile 390×844 → hero 12 px, nom 14 px, nav 14 px, contact 14 px (tous un cran sous les valeurs précédentes) ; desktop 1280×900 → valeurs inchangées (18/20/24/20 px).
 
 ---
 
@@ -365,3 +369,4 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-05 | Logo C/C++ dédié + description du projet d'anonymisation raccourcie et réduite (TODO-58) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-05 | Projets triés du plus récent au plus vieux + ids renumérotés (TODO-59) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-05 | Curiosity : « Hardware » retiré, « Space »/« Espace » en un mot (TODO-60) | *(branche `feat/content-cv-update`, à committer)* |
+| 2026-10-05 | Textes un cran plus petits sur mobile (TODO-61) | *(branche `feat/mobile-text-sizes`)* |

@@ -58,17 +58,19 @@ body {
 
 @layer base {
 	h1 {
-		@apply text-center text-lg md:text-xl xl:text-2xl font-semibold;
+		@apply text-center text-base md:text-xl xl:text-2xl font-semibold;
 	}
 
 	h2 {
-		@apply font-semibold text-base md:text-lg xl:text-xl;
+		@apply font-semibold text-sm md:text-lg xl:text-xl;
 	}
 
+	/* Phones get one step less across the board; the explicit sizes on the
+	   header, the hero email and the contact tile are aligned below. */
 	p,
 	li,
 	span {
-		@apply text-sm md:text-base xl:text-lg font-semibold;
+		@apply text-xs md:text-base xl:text-lg font-semibold;
 	}
 
 	img {

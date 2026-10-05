@@ -60,7 +60,7 @@ export default function GeneralSection() {
 							</p>
 							<a
 								href={`mailto:${contactData.emailPart1}@${contactData.emailPart2}.${contactData.emailPart3}`}
-								className="text-sm md:text-base xl:text-lg font-semibold opacity-70 hover:opacity-100 hover:text-glow transition-all duration-150"
+								className="text-xs md:text-base xl:text-lg font-semibold opacity-70 hover:opacity-100 hover:text-glow transition-all duration-150"
 							>
 								{`${contactData.emailPart1}@${contactData.emailPart2}.${contactData.emailPart3}`}
 							</a>

@@ -32,7 +32,7 @@ export default function Header() {
 		<header className="fixed flex items-center justify-center w-full bottom-5 md:bottom-auto md:top-[4dvh] left-0 z-20">
 			<nav className="inline-flex max-w-[98vw] backdrop-blur-md rounded-[35px] shadow-xl p-3.5 md:p-4">
 				<BGTile />
-				<ul className="relative flex mx-auto md:mx-3 gap-1.5 md:gap-4 text-base md:text-lg xl:text-2xl">
+				<ul className="relative flex mx-auto md:mx-3 gap-1.5 md:gap-4 text-sm md:text-lg xl:text-2xl">
 					{listNavbar}
 				</ul>
 			</nav>
