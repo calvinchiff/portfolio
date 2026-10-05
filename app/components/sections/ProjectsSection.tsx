@@ -104,7 +104,13 @@ export default function ProjectsSection() {
 										<div key={key} className="flex gap-2">
 											<span className="font-semibold">
 												{label[language]} :
-												<span className="opacity-60 ml-2">
+												<span
+													className={`opacity-60 ml-2 ${
+														key === "description"
+															? "text-xs md:text-sm xl:text-base"
+															: ""
+													}`}
+												>
 													{typeof value === "object"
 														? value[language]
 														: value}

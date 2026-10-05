@@ -6,20 +6,25 @@ export const projectsData = {
 		techno: { en: "Techno", fr: "Techno" },
 		state: { en: "State", fr: "État" }
 	},
+	// Newest first: the `id` doubles as the displayed number, so keep both in
+	// sync when adding a project.
 	projects: {
 		dev: [
 			{
 				id: "1",
-				title: { en: "Portfolio", fr: "Portfolio" },
+				title: {
+					en: "LLM anonymization gateway",
+					fr: "Sas d’anonymisation pour LLM"
+				},
 				description: {
-					en: "It's the portfolio you are watching right now !",
-					fr: "C'est le portfolio que vous regardez en ce moment même !"
+					en: "A gateway that anonymizes a document before sending it to an LLM, then restores it on the way back. The model only sees neutral tokens such as <NAME_1>. The mapping table never leaves the server. Handles .docx, .pdf, .pptx, .xlsx and images (OCR). Three detection strategies: regex, Presidio, and hybrid Presidio + GLiNER. A precision/recall/F1 harness compares them on public FR/EN/DE datasets. Also ships a web UI, a CLI and a batch mode. Nothing is persisted.",
+					fr: "Un sas qui anonymise un document avant de l’envoyer à un LLM, puis le restitue au retour. Le modèle ne voit que des jetons neutres comme <NOM_1>. La table de correspondance ne quitte jamais le serveur. Gère les .docx, .pdf, .pptx, .xlsx et les images (OCR). Trois stratégies de détection : regex, Presidio, et hybride Presidio + GLiNER. Un harnais précision/rappel/F1 les compare sur des datasets publics FR/EN/DE. Fournit aussi une interface web, une CLI et un mode batch. Rien n’est persisté."
 				},
 				link: "",
-				date: "03-2025",
+				date: "10-2026",
 				techno:
-					"Next.js, React, TypeScript, Tailwind CSS, Framer Motion, Figma, Docker, GitHub Actions, VPS Linux, Nginx",
-				state: { en: "Done", fr: "Terminé" }
+					"Python, FastAPI, pytest, Presidio, spaCy, GLiNER, PyMuPDF, RapidOCR, OCR, P/R/F1 evaluation",
+				state: { en: "In progress", fr: "En cours" }
 			},
 			{
 				id: "2",
@@ -39,6 +44,19 @@ export const projectsData = {
 			},
 			{
 				id: "3",
+				title: { en: "Portfolio", fr: "Portfolio" },
+				description: {
+					en: "It's the portfolio you are watching right now !",
+					fr: "C'est le portfolio que vous regardez en ce moment même !"
+				},
+				link: "",
+				date: "03-2025",
+				techno:
+					"Next.js, React, TypeScript, Tailwind CSS, Framer Motion, Figma, Docker, GitHub Actions, VPS Linux, Nginx",
+				state: { en: "Done", fr: "Terminé" }
+			},
+			{
+				id: "4",
 				title: { en: "Mangatheque API", fr: "Mangatheque API" },
 				description: {
 					en: "Built the backend for Mangatheque, an app that helps users keep track of their manga collections. Developed a secure API for user authentication and set up the database using NodeJS, MySQL, and Sequelize. Configured CI/CD pipelines to ensure smooth deployment and integration, utilizing Docker, GCP, and GitHub Actions.",
@@ -48,22 +66,6 @@ export const projectsData = {
 				date: "03-2024",
 				techno: "Node.js, MySQL, Sequelize, Docker, GCP, GitHub Actions",
 				state: { en: "Done", fr: "Terminé" }
-			},
-			{
-				id: "4",
-				title: {
-					en: "LLM anonymization gateway",
-					fr: "Sas d’anonymisation pour LLM"
-				},
-				description: {
-					en: "A gateway that anonymizes a document before handing it to an LLM (Claude) and restores it on the way back: the model only ever reasons on neutral tokens (<NAME_1>), and the user recovers the real values from a mapping table that never leaves the server. Multi-format (.docx / .pdf / .pptx / .xlsx / images with OCR), three detection strategies (regex baseline, Presidio, hybrid Presidio + GLiNER) compared by a precision/recall/F1 evaluation harness on public FR/EN/DE datasets, plus a drag-and-drop web UI, a CLI, a batch mode and an in-memory vault that is never persisted.",
-					fr: "Un sas qui anonymise un document avant de le confier à un LLM (Claude) puis le restitue au retour : le modèle ne raisonne que sur des jetons neutres (<NOM_1>) et l’utilisateur retrouve ses vraies valeurs via une table de correspondance qui ne quitte jamais le serveur. Multi-format (.docx / .pdf / .pptx / .xlsx / images avec OCR), trois stratégies de détection (baseline regex, Presidio, hybride Presidio + GLiNER) comparées par un harnais d’évaluation précision/rappel/F1 sur des datasets publics FR/EN/DE, plus une interface web en glisser-déposer, une CLI, un mode batch et un coffre en mémoire jamais persisté."
-				},
-				link: "",
-				date: "10-2026",
-				techno:
-					"Python, FastAPI, pytest, Presidio, spaCy, GLiNER, PyMuPDF, RapidOCR, OCR, P/R/F1 evaluation",
-				state: { en: "In progress", fr: "En cours" }
 			}
 		]
 	}
