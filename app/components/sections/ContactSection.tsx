@@ -29,12 +29,12 @@ export default function ContactSection() {
 					onClick={handleEmailClick}
 				>
 					<div className="h-full gap-4 flex flex-col text-center items-center justify-center font-semibold opacity-90">
-						<span className="text-base md:text-lg xl:text-xl">
+						<span className="text-sm md:text-lg xl:text-xl">
 							{contactData.text1[language]}
 						</span>
-						<span className="text-base md:text-lg xl:text-xl">
+						<span className="text-sm md:text-lg xl:text-xl">
 							{contactData.text2[language]}{" "}
-							<span className="font-bold text-base md:text-lg xl:text-xl transition-all duration-150 group-hover:text-glow">
+							<span className="font-bold text-sm md:text-lg xl:text-xl transition-all duration-150 group-hover:text-glow">
 								{contactData.emailPart1}@{contactData.emailPart2}.
 								{contactData.emailPart3}
 							</span>
