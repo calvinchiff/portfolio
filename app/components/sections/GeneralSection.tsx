@@ -40,7 +40,7 @@ export default function GeneralSection() {
 								alt="Avatar logo"
 								src="/general/Me_Logo.png"
 								fill
-								sizes="100%"
+								sizes="(max-width: 768px) 330px, 280px"
 								style={{ objectFit: "contain" }}
 							/>
 						</div>

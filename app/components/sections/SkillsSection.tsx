@@ -58,7 +58,7 @@ export default function SkillsSection() {
 													src={skill.icon}
 													alt={skill.name[language] + " icon"}
 													fill
-													sizes="100%"
+													sizes="(max-width: 768px) 32px, 56px"
 													style={{ objectFit: "contain" }}
 													className={`transition-all duration-300 ${
 														active === tile.id

@@ -55,7 +55,7 @@ export default function ContactSection() {
 							<div className="relative h-full w-full flex items-center justify-center">
 								<Image
 									src="/contact/linkedin-logo.png"
-									sizes="100%"
+									sizes="(max-width: 768px) 150px, 250px"
 									style={{ objectFit: "contain" }}
 									fill
 									alt="Logo of Linkedin"
@@ -72,7 +72,7 @@ export default function ContactSection() {
 							<div className="relative h-full w-full flex items-center justify-center">
 								<Image
 									src="/contact/github-logo.png"
-									sizes="100%"
+									sizes="(max-width: 768px) 150px, 250px"
 									style={{ objectFit: "contain" }}
 									fill
 									alt="Logo of Github"
@@ -86,15 +86,21 @@ export default function ContactSection() {
 							customClassName="cursor-pointer"
 							onClick={() => setCvPickerOpen(true)}
 						>
-							<div className="relative h-full w-full flex items-center justify-center">
-								<Image
-									src="/contact/resume-logo.png"
-									sizes="100%"
-									style={{ objectFit: "contain" }}
-									fill
-									alt="Logo of Resume"
-									className={`invert brightness-200 rotate-45 scale-75 opacity-70 group-hover:opacity-100 ${logoHover}`}
-								/>
+							<div className="relative h-full w-full flex flex-col items-center justify-center">
+								<div className="relative w-full flex-1 min-h-0">
+									<Image
+										src="/contact/resume-logo.png"
+										sizes="(max-width: 768px) 150px, 250px"
+										style={{ objectFit: "contain" }}
+										fill
+										alt="Download the CV"
+										className={`invert brightness-200 rotate-45 scale-75 opacity-70 group-hover:opacity-100 ${logoHover}`}
+									/>
+								</div>
+								{/* Label so the tile reads as "download my CV", not just a paperclip. */}
+								<span className="shrink-0 text-xs md:text-sm font-semibold opacity-70 transition-all duration-150 group-hover:opacity-100 group-hover:text-glow">
+									CV
+								</span>
 							</div>
 						</Tile>
 					</div>

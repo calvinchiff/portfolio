@@ -22,7 +22,7 @@ export default function LinkImageTile({
 						alt={sectionLink + " logo"}
 						src={imgSrc}
 						fill
-						sizes="100%"
+						sizes="(max-width: 768px) 100px, 250px"
 						style={{ objectFit: "contain" }}
 						className="opacity-90 group-hover:opacity-100 md:blur-xs group-hover:blur-none duration-150"
 					/>
