@@ -290,6 +290,14 @@ autres outils externes).
   - `app/globals.css` : sous 768 px, un cran de moins sur toute la base — `h1` `text-lg`→`text-base`, `h2` `text-base`→`text-sm`, `p/li/span` `text-sm`→`text-xs`. **Desktop inchangé.**
   - Alignement des tailles explicites qui seraient restées plus grandes : nav du header (`text-base`→`text-sm`), email de l'accueil (`text-sm`→`text-xs`), tuile contact (`text-base`→`text-sm`).
   - **Vérifié en Brave headless** : mobile 390×844 → hero 12 px, nom 14 px, nav 14 px, contact 14 px (tous un cran sous les valeurs précédentes) ; desktop 1280×900 → valeurs inchangées (18/20/24/20 px).
+- [x] **2026-10-05 — Perf : images surdimensionnées (cause du chargement lent)** (TODO-62) — *(branche `perf/image-optimization`)*
+  - **Cause principale** : tous les `<Image>` avaient `sizes="100%"`, donc Next servait chaque visuel en `w=1920` — même les icônes de 32 px. Mesuré : images = **957 Ko sur 1,18 Mo**.
+  - **Correctif** : `sizes` ajustés aux tailles réellement rendues (icônes `32/56 px`, logos de tuile `100/250 px`, avatar `330/280 px`, drapeau `40/60 px`, flèches `40/80 px`, flèche de tuile `40 px`).
+  - **Sources redimensionnées** vers leur taille d'affichage (jamais agrandies) : `general` **9,5 Mo → 752 Ko** (`Me_Logo` 3600→1024, logos 4221→512), `skills` **1,1 Mo → 320 Ko** (icônes ≤ 128 px, `TS_icon` 2048→128, `Node_icon` 1817→128), plus `contact`/`header`/`projects`.
+  - **Résultat mesuré (cache d'images froid)** : total **1,18 Mo → 350 Ko**, **images 957 Ko → 94 Ko (−90 %)** ; `Me_Logo` passe de 285 Ko (`w=1920`) à **14 Ko** (`w=384`). Contenu révélé en **210 ms** en local et **1,59 s** à 2 Mbps simulés.
+  - Bonus Pi : `sharp` n'a plus à réduire des PNG de 2048-4221 px à chaque requête — c'était vraisemblablement le vrai gouffre sur le Raspberry (le cache `.next/cache/images` est perdu à chaque redéploiement).
+- [x] **2026-10-05 — Tuile CV : libellé « CV »** (TODO-63) — *(branche `perf/image-optimization`)*
+  - Le logo (trombone) ne disait pas qu'on téléchargeait le CV : ajout d'un petit libellé **« CV »** sous l'icône, avec `alt="Download the CV"` et le même glow au survol.
 
 ---
 
@@ -370,3 +378,5 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-05 | Projets triés du plus récent au plus vieux + ids renumérotés (TODO-59) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-05 | Curiosity : « Hardware » retiré, « Space »/« Espace » en un mot (TODO-60) | *(branche `feat/content-cv-update`, à committer)* |
 | 2026-10-05 | Textes un cran plus petits sur mobile (TODO-61) | *(branche `feat/mobile-text-sizes`)* |
+| 2026-10-05 | Perf images : `sizes` corrigés + sources redimensionnées, 1,18 Mo → 350 Ko (TODO-62) | *(branche `perf/image-optimization`)* |
+| 2026-10-05 | Tuile CV : libellé « CV » sous l'icône (TODO-63) | *(branche `perf/image-optimization`)* |

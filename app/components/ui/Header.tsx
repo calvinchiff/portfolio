@@ -47,7 +47,7 @@ export default function Header() {
 							: "/header/Flag_FR_1.png"
 					}
 					fill
-					sizes="100%"
+					sizes="(max-width: 768px) 40px, 60px"
 					style={{ objectFit: "contain" }}
 					alt="Language Toggle between EN/FR"
 				/>

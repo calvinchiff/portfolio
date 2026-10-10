@@ -57,7 +57,7 @@ export default function ProjectsSection() {
 					<Image
 						src="/projects/arrow_left.png"
 						alt="Previous"
-						sizes="100%"
+						sizes="(max-width: 768px) 40px, 80px"
 						style={{ objectFit: "contain" }}
 						fill
 					/>
@@ -70,7 +70,7 @@ export default function ProjectsSection() {
 					<Image
 						src="/projects/arrow_right.png"
 						alt="Next"
-						sizes="100%"
+						sizes="(max-width: 768px) 40px, 80px"
 						style={{ objectFit: "contain" }}
 						fill
 					/>
