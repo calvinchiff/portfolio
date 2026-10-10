@@ -86,20 +86,25 @@ export default function ContactSection() {
 							customClassName="cursor-pointer"
 							onClick={() => setCvPickerOpen(true)}
 						>
-							<div className="relative h-full w-full flex flex-col items-center justify-center">
-								<div className="relative w-full flex-1 min-h-0">
-									<Image
-										src="/contact/resume-logo.png"
-										sizes="(max-width: 768px) 150px, 250px"
-										style={{ objectFit: "contain" }}
-										fill
-										alt="Download the CV"
-										className={`invert brightness-200 rotate-45 scale-75 opacity-70 group-hover:opacity-100 ${logoHover}`}
-									/>
-								</div>
-								{/* Label so the tile reads as "download my CV", not just a paperclip. */}
+							<div className="relative h-full w-full flex flex-col items-center justify-center gap-1">
+								{/* Inline download glyph: no asset, stays crisp at any size, and
+								    needs no SVG exception in the image optimizer. */}
+								<svg
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth={1.6}
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									aria-hidden="true"
+									className="w-[44%] max-h-[55%] text-white opacity-70 transition-all duration-150 group-hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(252,255,210,0.9)]"
+								>
+									<path d="M12 3v11" />
+									<path d="m7.5 9.5 4.5 4.5 4.5-4.5" />
+									<path d="M4 16.5v2A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-2" />
+								</svg>
 								<span className="shrink-0 text-xs md:text-sm font-semibold opacity-70 transition-all duration-150 group-hover:opacity-100 group-hover:text-glow">
-									CV
+									{contactData.cv.tileLabel[language]}
 								</span>
 							</div>
 						</Tile>
