@@ -11,6 +11,9 @@ export const contactData = {
 	githubLink: "github.com",
 	cv: {
 		title: { en: "Download my CV", fr: "Télécharger mon CV" },
+		// Short caption under the download icon. "CV" works in both languages
+		// (UK / international English); switch `en` to "Resume" for US English.
+		tileLabel: { en: "CV", fr: "CV" },
 		subtitle: {
 			en: "Pick a language and a version.",
 			fr: "Choisis une langue et une version."

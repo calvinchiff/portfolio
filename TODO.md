@@ -298,6 +298,11 @@ autres outils externes).
   - Bonus Pi : `sharp` n'a plus à réduire des PNG de 2048-4221 px à chaque requête — c'était vraisemblablement le vrai gouffre sur le Raspberry (le cache `.next/cache/images` est perdu à chaque redéploiement).
 - [x] **2026-10-05 — Tuile CV : libellé « CV »** (TODO-63) — *(branche `perf/image-optimization`)*
   - Le logo (trombone) ne disait pas qu'on téléchargeait le CV : ajout d'un petit libellé **« CV »** sous l'icône, avec `alt="Download the CV"` et le même glow au survol.
+- [x] **2026-10-05 — Tuile CV : icône de téléchargement à la place du trombone** (TODO-64) — *(à committer)*
+  - Le trombone (`resume-logo.png`) est remplacé par une **icône de téléchargement inline** (flèche vers un bac) dessinée en SVG dans `ContactSection.tsx` : nette à toute taille, aucun asset, et aucune exception SVG à activer dans l'optimiseur d'images Next.
+  - Le libellé **« CV »** est **rapproché de l'icône** (4 px au lieu de l'espace laissé par l'ancien conteneur `flex-1`) et devient **bilingue** via `contactData.cv.tileLabel` — « CV » s'employant aussi en anglais UK/international, il suffit de passer `en` à `"Resume"` pour l'anglais US.
+  - **Vérifié en Brave headless** : desktop 1280 → icône 120×120, label à 4 px, dans la tuile ; mobile 390 → 71×71, label à 4 px ; EN et FR affichent bien « CV » ; glow conservé au survol.
+  - `public/contact/resume-logo.png` n'est plus référencé (supprimable).
 
 ---
 
@@ -380,3 +385,4 @@ git show 16218c9:app/components/ui/BGTopo.tsx > app/components/ui/BGTopo.tsx
 | 2026-10-05 | Textes un cran plus petits sur mobile (TODO-61) | *(branche `feat/mobile-text-sizes`)* |
 | 2026-10-05 | Perf images : `sizes` corrigés + sources redimensionnées, 1,18 Mo → 350 Ko (TODO-62) | *(branche `perf/image-optimization`)* |
 | 2026-10-05 | Tuile CV : libellé « CV » sous l'icône (TODO-63) | *(branche `perf/image-optimization`)* |
+| 2026-10-05 | Tuile CV : icône de téléchargement + label bilingue rapproché (TODO-64) | *(à committer)* |
